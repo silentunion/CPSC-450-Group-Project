@@ -1,1 +1,1 @@
-CPSC 450 Group Project
+SequenceAligner
