@@ -37,8 +37,8 @@ public class Smith_waterman
 		B="AAGTCC";
 		A="AGTCTC";
 		
-		A="CTACT";
-		B="TCTT";
+		A="CTACTACTA";
+		B="CTCTCTC";
 		
 		//B="CAA";
 
