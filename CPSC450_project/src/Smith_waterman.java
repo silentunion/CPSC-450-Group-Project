@@ -30,12 +30,22 @@ public class Smith_waterman
 		//A="TGGTTACGG";
 		//B="CGGTTGACTA";
 		
-		B="AAATGCAAAGCTCG";
-		A="AATGCA";
+		//B="AAATGCAAAGCTCG";
+		//A="GCCSDCDCDDCTGCAA";
+		
+		
+		B="AAGTCC";
+		A="AGTCTC";
+		
+		A="CTACT";
+		B="TCTT";
+		
+		//B="CAA";
 
-		match=1;
-		miss=-1;
-		gap=-2;
+		//miss must be greate than gap
+		match=2;
+		miss=-2;
+		gap=-1;
 
 		scoringMatrix= new Integer[B.length()+1][A.length()+1];
 		//fill it with 0s in 1st row and column and -1s everywhere else
