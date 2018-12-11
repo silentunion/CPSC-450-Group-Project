@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import sequenceAlignment.longestCommonSubsequence.LCS;
 import sequenceAlignment.needlemanWunsch.SequenceAlignmentWunsch;
+import sequenceAlignment.smithWaterman.Smith_waterman;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -284,6 +285,13 @@ public class Main extends Application {
 
 				// IF SMITH WATERMAN ALGORITHM IS SELECTED:
 				case SWM:
+					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText());
+					Integer[][] matrix = smith.getMatrix();
+					
+					for (int i = 1; i < matrix.length; i++)
+						for (int j = 1; j < matrix[i].length; j++)
+							mainGrid.addItem(matrix[i][j], j, i);
+					
 					break;
 
 				default:
