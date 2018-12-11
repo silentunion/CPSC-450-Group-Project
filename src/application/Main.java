@@ -1,6 +1,7 @@
 package application;
 
 import javafx.application.Application;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
@@ -11,11 +12,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.StackPane;
 
 public class Main extends Application {
@@ -35,6 +38,9 @@ public class Main extends Application {
 	BorderPane mainLayout = new BorderPane();
 	ScrollPane scroll = new ScrollPane();
 	HBox hbox = new HBox();
+	HBox hboxSequence1 = new HBox();
+	HBox hboxSequence2 = new HBox();
+	VBox vboxSequences = new VBox();
 	GridPane grid = new GridPane();
 	StackPane stack = new StackPane();
 
@@ -56,19 +62,106 @@ public class Main extends Application {
 			window = primaryStage;
 			primaryStage.setTitle("Sequence Aligner");
 
+			// Grid starts out invisible
+			grid.setVisible(false);
+			
 			// Only one check box can be active at a time. Start program with LCS active.
 			checkLCS.setSelected(true);
 			checkNMW.setSelected(false);
 			checkSWM.setSelected(false);
 
-			// set up the hbox: the top layout with the text fields and buttons
-			hbox.getChildren().addAll(txtInput, txtInput2, btnCreate, btnClear, btnTest, checkLCS, checkNMW, checkSWM);
+			// First we set up the vbox & hbox's which contain the top layout with the text fields and buttons
+			
+			//This first HBox contains the first sequence text input box
+			Label sequenceLabel = new Label("Sequence 1:");			
+			hboxSequence1.setSpacing(10);
+			hboxSequence1.setAlignment(Pos.CENTER_LEFT);
+			hboxSequence1.getChildren().addAll(sequenceLabel, txtInput);
+			
+			//This second HBox contains the second sequence text input box
+			sequenceLabel = new Label("Sequence 2:");
+			hboxSequence2.setSpacing(10);
+			hboxSequence2.setAlignment(Pos.CENTER_LEFT);
+			hboxSequence2.getChildren().addAll(sequenceLabel, txtInput2);
+			
+			//This VBox contains positions the text inputs on top of one another.
+			vboxSequences.setSpacing(10);
+			vboxSequences.setMaxSize(300, 300);
+			vboxSequences.setPadding(new Insets(15, 12, 10, 15));
+			vboxSequences.getChildren().addAll(hboxSequence1, hboxSequence2);
+			
+			//Finally this last HBox organized the text inputs with the buttons and check boxes.
+			hbox.getChildren().add(vboxSequences);
+			hbox.setAlignment(Pos.CENTER);
+			hbox.getChildren().addAll(btnCreate, btnClear, btnTest, checkLCS, checkNMW, checkSWM);
 			hbox.setBorder(Border.EMPTY);
-			hbox.setPadding(new Insets(15, 12, 10, 15));
+			hbox.setPadding(new Insets(5, 5, 5, 5));
 			hbox.setSpacing(10);
 
-			// Grid starts out invisible
-			grid.setVisible(false);
+			
+			//TEXT INPUT TEXT FORMATTER ALLOWS ONLY A C G T and U to be entered
+			//Text inputs cannot share the same formatter so we need two.
+			TextFormatter<String> textFormatterSeq1 = new TextFormatter<>( change -> {
+			    if (!change.isContentChange()) {
+			        return change;
+			    }
+
+			    Character text;
+			    //Grab the character that was entered into the text input, if size = 0 then we are at the first entry.
+			    if (change.getControlNewText().length() > 0)
+			    	text = change.getControlNewText().charAt(change.getControlNewText().length() - 1);
+			    else
+			    	return change;
+			    //If it is the correct letter, allow the change. Otherwise throw it away.
+			    if (text.equals('a') || text.equals('c') || text.equals('g') || text.equals('t') ||  text.equals('u')) {
+			        return change;
+			    }
+			    return null;
+			});
+			
+			TextFormatter<String> textFormatterSeq2 = new TextFormatter<>( change -> {
+			    if (!change.isContentChange()) {
+			        return change;
+			    }
+
+			    Character text;
+			    //Grab the character that was entered into the text input, if size = 0 then we are at the first entry.
+			    if (change.getControlNewText().length() > 0)
+			    	text = change.getControlNewText().charAt(change.getControlNewText().length() - 1);
+			    else
+			    	return change;
+			    //If it is the correct letter, allow the change. Otherwise throw it away.
+			    if (text.equals('a') || text.equals('c') || text.equals('g') || text.equals('t') ||  text.equals('u')) {
+			        return change;
+			    }
+			    return null;
+			});
+			txtInput.setTextFormatter(textFormatterSeq1);
+			txtInput2.setTextFormatter(textFormatterSeq2);
+			
+			
+			// Here we set up of side panel for information, to be expanded on later, uses a stackpane
+			// Label info = new Label("Info goes Here");
+			// StackPane.setAlignment(info, Pos.CENTER);
+			// stack.getChildren().add(info);
+			stack.setPadding(new Insets(15, 12, 10, 15));
+			stack.setBorder(Border.EMPTY);
+			stack.setMinWidth(300);
+			stack.setStyle("-fx-border-style:solid; -fx-border-color: black;");
+
+			// add the layouts to the main layout
+			mainLayout.setTop(hbox);
+			mainLayout.setRight(stack);
+			mainLayout.setCenter(scroll);
+			mainScene = new Scene(mainLayout, 900, 400);
+
+			// create the window and initialize
+			window.setScene(mainScene);
+			window.show();
+			
+			
+			//CHECK BOX EVENT HANDLERS GO BELOW HERE
+			
 
 			checkLCS.setOnAction(e -> {
 				// Only one check box can be active at a time.
@@ -96,28 +189,9 @@ public class Main extends Application {
 
 				selectedAlgorithm = algorithmType.SWM;
 			});
-
-			// set up of side panel for information, to be expanded on late, uses a stackpane
-			// Label info = new Label("Info goes Here");
-			// StackPane.setAlignment(info, Pos.CENTER);
-			// stack.getChildren().add(info);
-			stack.setPadding(new Insets(15, 12, 10, 15));
-			stack.setBorder(Border.EMPTY);
-			stack.setMinWidth(300);
-			stack.setStyle("-fx-border-style:solid; -fx-border-color: black;");
-
-			// add the layouts to the main layout
-			mainLayout.setTop(hbox);
-			mainLayout.setRight(stack);
-			mainLayout.setCenter(scroll);
-			mainScene = new Scene(mainLayout, 900, 400);
-
-			// create the window and initialize
-			window.setScene(mainScene);
-			window.show();
 			
 			
-			// BUTTONS GO BELOW HERE
+			// BUTTON EVENT HANDLERS GO BELOW HERE
 
 			
 			// Create button creates the grid
@@ -218,6 +292,7 @@ public class Main extends Application {
 				}
 			});
 
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
