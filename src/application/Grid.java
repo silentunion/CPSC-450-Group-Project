@@ -109,11 +109,11 @@ public class Grid
 	public void fillGrid()
 	{
 		int max = 5;
-		int[] stuff;
+		//int[] stuff;
 		
 		for(int i = 0; i < max; i++)
 		{
-			stuff = new int[i];
+			//stuff = new int[i];
 			
 			//label goes inside the pane which goes inside the grid coord
 			Label label = new Label(Integer.toString(i));

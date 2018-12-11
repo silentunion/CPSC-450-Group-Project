@@ -1,7 +1,6 @@
 package application;
 
 import javafx.application.Application;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
