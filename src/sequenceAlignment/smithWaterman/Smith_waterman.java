@@ -24,9 +24,20 @@ public class Smith_waterman
 	//scoring matrix for A and B
 	private static Integer [][] scoringMatrix;
 	
+	private StringBuffer seq1Align;
+	private StringBuffer seq2Align;
+	
 	public Integer[][] getMatrix()
 	{
 		return scoringMatrix;
+	}
+	public StringBuffer getAlignment()
+	{
+		return seq1Align;
+	}
+	public StringBuffer getAlignment2()
+	{
+		return seq2Align;
 	}
 
 	//sequences and scoring matrix values are hardcoded for now
@@ -52,7 +63,9 @@ public class Smith_waterman
 		this.match=match;
 		this.miss=miss;
 		this.gap=gap;
-	
+		
+		seq1Align = new StringBuffer();
+	    seq2Align = new StringBuffer();
 
 		scoringMatrix= new Integer[B.length()+1][A.length()+1];
 		//fill it with 0s in 1st row and column and -1s everywhere else
@@ -67,7 +80,7 @@ public class Smith_waterman
 			}
 		}
 		
-		runAlg(this);
+		runAlg(this,seq1Align,seq2Align);
 	}
 	//checks if two character match, miss or if one is a gap
 	public static int checkScore(char a, char b)
@@ -173,7 +186,7 @@ public class Smith_waterman
 		
 	}
 	
-	public static void runAlg(Smith_waterman myMatrix)
+	public static void runAlg(Smith_waterman myMatrix, StringBuffer seq1Align,StringBuffer seq2Align)
 	{
 		
 
@@ -223,8 +236,7 @@ public class Smith_waterman
 		//read through again and add all = max
 		System.out.println(allMax);
 	
-		StringBuffer seq1Align = new StringBuffer();
-	    StringBuffer seq2Align = new StringBuffer();
+		
 	    
 	
 	

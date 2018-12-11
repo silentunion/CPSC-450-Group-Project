@@ -292,6 +292,13 @@ public class Main extends Application {
 						for (int j = 1; j < matrix[i].length; j++)
 							mainGrid.addItem(matrix[i][j], j, i);
 					
+					alignmentLabel = new Label("Aligned Sequences:");
+					Label alignment2 = new Label(smith.getAlignment()+ "\n" +smith.getAlignment2());
+					StackPane.setAlignment(alignmentLabel, Pos.TOP_CENTER);
+					StackPane.setAlignment(alignment2, Pos.CENTER);
+					stack.getChildren().add(alignmentLabel);
+					stack.getChildren().add(alignment2);
+					
 					break;
 
 				default:
