@@ -16,6 +16,8 @@ public class Grid
 	GridPane grid;
 	int numCols = 0;
 	int numRows = 0;
+	String input;
+	String input2;
 	
 	ColumnConstraints cols = new ColumnConstraints(30);
 	RowConstraints rows = new RowConstraints(30);
@@ -31,8 +33,8 @@ public class Grid
 	 */
 	public void createGrid(TextField txtInput, TextField txtInput2)
 	{		
-		String input = txtInput.getText();
-		String input2 = txtInput2.getText();
+		input = txtInput.getText();
+		input2 = txtInput2.getText();
 						
 		for(int i = 0; i < input.length(); i++)
 		{
@@ -179,5 +181,12 @@ public class Grid
 		{
 			node.setStyle("-fx-background-color: #CCCCCC;");
 		}
+	}
+	
+	//Returns the sequences that the grid was created with.
+	public String[] getSequences()
+	{
+		String[] sequences = { input, input2 };
+		return sequences;
 	}
 }

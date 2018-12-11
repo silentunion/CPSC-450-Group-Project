@@ -1,4 +1,5 @@
-package application.NeedlemanWunsch;
+package sequenceAlignment;
+
 /**************************************************
  * 
  * Class Name : DynamicProgramming
@@ -11,10 +12,19 @@ public abstract class DynamicProgramming {
 	protected String sequence1;
 	protected String sequence2;
 	protected Cell[][] scoreTable;
-	protected int match;
-	protected int mismatch;
-	protected int space;
+	protected int match = 0;
+	protected int mismatch = 0;
+	protected int space = 0;
 
+	//Constructor for the LCS algorithm.
+	public DynamicProgramming(String sequence1, String sequence2)
+	{
+		this.sequence1 = sequence1;
+		this.sequence2 = sequence2;		
+		scoreTable = new Cell[sequence2.length() + 1][sequence1.length() + 1];
+	}
+	
+	//Constructor for Needleman Wunsch algorithm.
 	public DynamicProgramming(String sequence1, String sequence2, int match, int mismatch, int gap) {
 		this.sequence1 = sequence1;
 		this.sequence2 = sequence2;
@@ -114,100 +124,6 @@ public abstract class DynamicProgramming {
 	 * 
 	 * Return : Nothing
 	 **/
-	protected void populateTable() {
-		
-		//Zero'th row and column have already been calculated
-		for (int row = 1; row < scoreTable.length; row++) {
-			for (int col = 1; col < scoreTable[row].length; col++) {
-				
-				Cell currentCell = scoreTable[row][col];
-				Cell cellAbove = scoreTable[row - 1][col];
-				Cell cellToLeft = scoreTable[row][col - 1];
-				Cell cellAboveLeft = scoreTable[row - 1][col - 1];
-				
-				/*the score[i,j] is the max of
-				 *		the score of the cell above + gap value
-				 *		the score of the cell to the left + gap value
-				 *		the score of the cell to the up and left + mis or mismatch score
-				 */
-				int rowScore = cellAbove.getScore() + space;
-				int colScore = cellToLeft.getScore() + space;
-				int matchOrMismatchScore = cellAboveLeft.getScore();								
-				if (sequence2.charAt(currentCell.getRow() - 1) == sequence1.charAt(currentCell.getCol() - 1)) {
-					matchOrMismatchScore += match;
-				} else {
-					matchOrMismatchScore += mismatch;
-				}
-				
-				//Now we calculate the max of the scores and set the score and pointer accordingly		
-				if (rowScore >= colScore) {
-					if (matchOrMismatchScore >= rowScore) {
-						currentCell.setScore(matchOrMismatchScore);
-						currentCell.setPrevCell(cellAboveLeft);
-					} else {
-						currentCell.setScore(rowScore);
-						currentCell.setPrevCell(cellAbove);
-					}
-				} else {
-					if (matchOrMismatchScore >= colScore) {
-						currentCell.setScore(matchOrMismatchScore);
-						currentCell.setPrevCell(cellAboveLeft);
-					} else {
-						currentCell.setScore(colScore);
-						currentCell.setPrevCell(cellToLeft);
-					}
-				}
-			}
-		}
-	}
+	abstract protected void populateTable();
 
-	public void printScoreTable() {
-		loadScoreTable();
-		System.out.print("\n");
-		for (int i = 0; i < sequence2.length() + 2; i++) {
-			for (int j = 0; j < sequence1.length() + 2; j++) {
-				if (i == 0) {
-					if (j == 0 || j == 1) {
-						System.out.print("  ");
-					} else {
-						if (j == 2) {
-							System.out.print("     ");
-						} else {
-							System.out.print("   ");
-						}
-						System.out.print(sequence1.charAt(j - 2));
-					}
-				} else if (j == 0) {
-					if (i == 1) {
-						System.out.print("  ");
-					} else {
-						System.out.print(" " + sequence2.charAt(i - 2));
-					}
-				} else {
-					String toPrint;
-					Cell currentCell = scoreTable[i - 1][j - 1];
-					Cell prevCell = currentCell.getPrevCell();
-					if (prevCell != null) {
-						if (currentCell.getCol() == prevCell.getCol() + 1
-								&& currentCell.getRow() == prevCell.getRow() + 1) {
-							toPrint = "\\";
-						} else if (currentCell.getCol() == prevCell.getCol() + 1) {
-							toPrint = "-";
-						} else {
-							toPrint = "|";
-						}
-					} else {
-						toPrint = " ";
-					}
-					int score = currentCell.getScore();
-					String s = String.format("%1$3d", score);
-					toPrint += s;
-					System.out.print(toPrint);
-				}
-
-				System.out.print(' ');
-			}
-			System.out.println();
-		}
-	}
 }

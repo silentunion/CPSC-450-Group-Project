@@ -1,4 +1,4 @@
-package application.NeedlemanWunsch;
+package sequenceAlignment;
 /**************************************************
  * 
  * Class Name : UserInterface

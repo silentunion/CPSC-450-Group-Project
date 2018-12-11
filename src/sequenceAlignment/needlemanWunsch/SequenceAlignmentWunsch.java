@@ -1,4 +1,8 @@
-package application.NeedlemanWunsch;
+package sequenceAlignment.needlemanWunsch;
+
+import sequenceAlignment.Cell;
+import sequenceAlignment.DynamicProgramming;
+
 /**************************************************
  * 
  * Class Name : SequenceAlignment
@@ -58,10 +62,77 @@ public class SequenceAlignmentWunsch extends DynamicProgramming {
 
       return alignments;
    }
-
-   public Cell[][] getScoreTable() {
+   
+   /**
+	 * Method Name : populateTable
+	 * Purpose:	Is responsible for generating the score values and cell pointers
+	 * 
+	 * Parameters : Nothing
+	 * 
+	 * Return : Nothing
+	 **/
+   @Override
+   protected void populateTable()
+   {
+	 //Zero'th row and column have already been calculated
+	 		for (int row = 1; row < scoreTable.length; row++) {
+	 			for (int col = 1; col < scoreTable[row].length; col++) {
+	 				
+	 				Cell currentCell = scoreTable[row][col];
+	 				Cell cellAbove = scoreTable[row - 1][col];
+	 				Cell cellToLeft = scoreTable[row][col - 1];
+	 				Cell cellAboveLeft = scoreTable[row - 1][col - 1];
+	 				
+	 				/*the score[i,j] is the max of
+	 				 *		the score of the cell above + gap value
+	 				 *		the score of the cell to the left + gap value
+	 				 *		the score of the cell to the up and left + mis or mismatch score
+	 				 */
+	 				int rowScore = cellAbove.getScore() + space;
+	 				int colScore = cellToLeft.getScore() + space;
+	 				int matchOrMismatchScore = cellAboveLeft.getScore();								
+	 				if (sequence2.charAt(currentCell.getRow() - 1) == sequence1.charAt(currentCell.getCol() - 1)) {
+	 					matchOrMismatchScore += match;
+	 				} else {
+	 					matchOrMismatchScore += mismatch;
+	 				}
+	 				
+	 				//Now we calculate the max of the scores and set the score and pointer accordingly		
+	 				if (rowScore >= colScore) {
+	 					if (matchOrMismatchScore >= rowScore) {
+	 						currentCell.setScore(matchOrMismatchScore);
+	 						currentCell.setPrevCell(cellAboveLeft);
+	 					} else {
+	 						currentCell.setScore(rowScore);
+	 						currentCell.setPrevCell(cellAbove);
+	 					}
+	 				} else {
+	 					if (matchOrMismatchScore >= colScore) {
+	 						currentCell.setScore(matchOrMismatchScore);
+	 						currentCell.setPrevCell(cellAboveLeft);
+	 					} else {
+	 						currentCell.setScore(colScore);
+	 						currentCell.setPrevCell(cellToLeft);
+	 					}
+	 				}
+	 			}
+	 		}
+   }
+   
+   //Return the score table as an integer array.
+   public int[][] getScoreTable() {
 	   loadScoreTable();
-	   return scoreTable;
+	   
+	 //convert score table from Cell object to Integers.
+	   int[][] matrix = new int[scoreTable.length][scoreTable[0].length];
+	   for(int i = 0; i < matrix.length; i++)
+	   {
+		   for(int j = 0; j < matrix[i].length; j++)
+		   {
+			   matrix[i][j] = scoreTable[i][j].getScore();
+		   }
+	   }
+	   return matrix;
 	}
    
    /**
