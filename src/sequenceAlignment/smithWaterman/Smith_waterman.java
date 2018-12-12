@@ -190,7 +190,7 @@ public class Smith_waterman
 	   }*/
 	public static void main(String[] args)
 	{
-		Smith_waterman test = new Smith_waterman("TGTTACGG","GGTTGACTA",3,-3,-2);
+		Smith_waterman test = new Smith_waterman("aaccgg","acg",3,-3,-2);
 		//runAlg(test);
 		/* and  
 		;
@@ -256,6 +256,8 @@ public class Smith_waterman
 	    System.out.println(seq1Align);
 	    System.out.println(seq2Align);		
 	    Coord pos;
+	    Coord myStringpos;
+	    Stack<Coord> mysPos=new Stack<Coord>();
 	    int next=-1;
 	    int current=max;
 	    Direction going=Direction.blank;
@@ -283,12 +285,16 @@ public class Smith_waterman
 	    	}
 	    	else
 	    	{
-	    		prev= myMatrix.new Coord(myRow+1,myCol+1);
+	    		//prev= myMatrix.new Coord(myRow,myCol);
 	    	}
 	    	
 	    	pos = myMatrix.new Coord(myRow,myCol);
+	    	myStringpos= myMatrix.new Coord(myRow-1,myCol-1);
 	    	System.out.println("at position "+pos);
+	    	System.out.println("chars at "+myStringpos.x+" and "+myStringpos.y);
+	    	System.out.println(A.charAt(myStringpos.y)+" "+B.charAt(myStringpos.x));
 	    	myPositions.push(pos);
+	    	mysPos.push(myStringpos);
 	    	//System.out.println(myDirections.peek());
 	    	//System.out.println(prev+" "+pos);
 	    	//System.out.println(skip);
@@ -432,48 +438,53 @@ public class Smith_waterman
 	    	myDirections.push(going);
 	    	System.out.println(myRow+", "+myCol);
 
-	    	System.out.print("compare "+B.charAt(myRow));
-    		System.out.println(" with "+A.charAt(myCol));
-    			    	switch(going)
+	    //	System.out.print("compare "+B.charAt(myRow));
+    	//	System.out.println(" with "+A.charAt(myCol));
+
+	    	if(diag==0)
+	    	{
+	    		System.out.print("LOOK HERE "+B.charAt(myStringpos.x));
+	    		System.out.println(" and "+A.charAt(myStringpos.y));	 
+	    		if(A.charAt(myStringpos.y)==B.charAt(myStringpos.x))
+	    		{
+	    			seq1Align.insert(0, B.charAt(myStringpos.x));
+	    			//System.out.println(B.charAt(myCol));
+	  			    seq2Align.insert(0, A.charAt(myStringpos.y));
+	    		}
+	    		break;
+	    	}
+    		switch(going)
     		{
     		case start:
     			break;
     		case up:
-    			seq1Align.insert(0, '_');
-    			//myCol--;
-    			seq2Align.insert(0, B.charAt(myRow));
+
+    			seq2Align.insert(0, '_');
+    			seq1Align.insert(0, B.charAt(myStringpos.x));
     			break;
     		case left:
-    			seq2Align.insert(0, '_');
-    			seq1Align.insert(0, A.charAt(myCol));
+    			seq1Align.insert(0, '_');
+    			seq2Align.insert(0, A.charAt(myStringpos.y));
     			break;
     		case blank:
     		case diagonal:
-    			seq1Align.insert(0, A.charAt(myCol));
-  			    seq2Align.insert(0, B.charAt(myRow));
+    			seq1Align.insert(0, B.charAt(myStringpos.x));
+    			//System.out.println(B.charAt(myCol));
+  			    seq2Align.insert(0, A.charAt(myStringpos.y));
     			break;
     		default:
     			System.out.println("bad");
 
     			break;
     		}
+    		
+    		
 	    	System.out.println(seq1Align);
 	    	System.out.println(seq2Align);
 	    	//dir=nextDir;
 	    	coming=going;
 	    	current=next;
 	    	
-	    	if(diag==0)
-	    	{
-	    		System.out.print("LOOK HERE "+B.charAt(myRow-1));
-	    		System.out.println(" and "+A.charAt(myCol-1));	 
-	    		if(A.charAt(myCol-1)==B.charAt(myRow-1))
-	    		{
-	    		seq1Align.setCharAt(0, A.charAt(myCol-1));
-	    		seq2Align.setCharAt(0, B.charAt(myRow-1));
-	    		}
-	    		break;
-	    	}
 
 	    	
 	    	System.out.println("END OF ITERATION\n");

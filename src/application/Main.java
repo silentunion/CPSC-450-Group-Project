@@ -248,9 +248,9 @@ public class Main extends Application {
 					int[][] lcsTable = lcs.getScoreTable();
 
 					// For the LCS algorithm we skip row & column zero because its always the same
-					for (int i = 1; i < lcsTable.length; i++)
-						for (int j = 1; j < lcsTable[i].length; j++)
-							mainGrid.addItem(lcsTable[i][j], j, i,false);
+					for (int i = 1; i < lcsTable.length+1; i++)
+						for (int j = 1; j < lcsTable[i-1].length+1; j++)
+							mainGrid.addItem(lcsTable[i-1][j-1], j, i,false);
 
 					//mainGrid.addItem(2, 2, 2, true);
 					// Create the info for the information tab:
@@ -271,9 +271,9 @@ public class Main extends Application {
 
 					// For the needleman wunsch algorithm we skip row & column zero because its
 					// always the same
-					for (int i = 1; i < scoreTable.length; i++)
-						for (int j = 1; j < scoreTable[i].length; j++)
-							mainGrid.addItem(scoreTable[i][j], j, i,false);
+					for (int i = 1; i < scoreTable.length+1; i++)
+						for (int j = 1; j < scoreTable[i-1].length+1; j++)
+							mainGrid.addItem(scoreTable[i-1][j-1], j, i,false);
 
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Aligned Sequences:");
@@ -291,24 +291,27 @@ public class Main extends Application {
 					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText());
 					Integer[][] matrix = smith.getMatrix();
 					
-					for (int i = 1; i < matrix.length; i++)
-						for (int j = 1; j < matrix[i].length; j++)
-							mainGrid.addItem(matrix[i][j], j, i,false);
+					for (int i = 1; i < matrix.length+1; i++)
+						for (int j = 1; j < matrix[i-1].length+1; j++)
+							mainGrid.addItem(matrix[i-1][j-1], j, i,false);
 					
 					alignmentLabel = new Label("Aligned Sequences:");
 					Label alignment2 = new Label(smith.getAlignment()+ "\n" +smith.getAlignment2());
 					
 					//Stack<Smith_waterman.> myStack = smith.getTraceback();
-				//	Stack<Smith_waterman.Coord> myStack = smith.getTraceback();
+					Stack<Smith_waterman.Coord> myStack = smith.getTraceback();
 					
+					Smith_waterman.Coord item= myStack.pop();
 					//mainGrid.addItem(2, 2, 2, true);
+					mainGrid.addItem(matrix[item.getY()][item.getX()],  item.getY()+1,item.getX()+1, true);
 					
-				/*	for(Smith_waterman.Coord item: myStack)
+					//for(Smith_waterman.Coord item: myStack)
 					{
 						System.out.println(item.getX());
 						System.out.println(item.getY());
-						//mainGrid.addItem(matrix[item.getY()][item.getX()], item.getX(), item.getY(), true);
-					}*/
+						//mainGrid.g
+						//mainGrid.addItem(matrix[item.getY()][item.getX()],  item.getY()+1,item.getX()+1, true);
+					}
 					
 					StackPane.setAlignment(alignmentLabel, Pos.TOP_CENTER);
 					StackPane.setAlignment(alignment2, Pos.CENTER);

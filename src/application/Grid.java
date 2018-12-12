@@ -33,8 +33,8 @@ public class Grid
 	 */
 	public void createGrid(TextField txtInput, TextField txtInput2)
 	{		
-		input = txtInput.getText();
-		input2 = txtInput2.getText();
+		input = " "+txtInput.getText();
+		input2 = " "+txtInput2.getText();
 						
 		for(int i = 0; i < input.length(); i++)
 		{
