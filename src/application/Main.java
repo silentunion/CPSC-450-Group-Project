@@ -301,9 +301,9 @@ public class Main extends Application {
 					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText());
 					Integer[][] matrix = smith.getMatrix();
 					
-					for (int i = 1; i < matrix.length; i++)
-						for (int j = 1; j < matrix[i].length; j++)
-							mainGrid.addItem(matrix[i][j], j, i,false);
+					for (int i = 1; i < matrix.length+1; i++)
+						for (int j = 1; j < matrix[i].length+1; j++)
+							mainGrid.addItem(matrix[i-1][j-1], j, i,false);
 					
 					alignmentLabel = new Label("Aligned Sequences:");
 					Label alignment2 = new Label(smith.getAlignment()+ "\n" +smith.getAlignment2());
