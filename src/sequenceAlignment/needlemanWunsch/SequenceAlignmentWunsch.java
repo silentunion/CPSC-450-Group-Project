@@ -1,5 +1,7 @@
 package sequenceAlignment.needlemanWunsch;
 
+import java.util.ArrayList;
+
 import sequenceAlignment.Cell;
 import sequenceAlignment.DynamicProgramming;
 
@@ -120,11 +122,11 @@ public class SequenceAlignmentWunsch extends DynamicProgramming {
    }
    
    //Return the score table as an integer array.
-   public int[][] getScoreTable() {
+   public Cell[][] getScoreTable() {
 	   loadScoreTable();
 	   
 	 //convert score table from Cell object to Integers.
-	   int[][] matrix = new int[scoreTable.length][scoreTable[0].length];
+	   /*int[][] matrix = new int[scoreTable.length][scoreTable[0].length];
 	   for(int i = 0; i < matrix.length; i++)
 	   {
 		   for(int j = 0; j < matrix[i].length; j++)
@@ -132,7 +134,8 @@ public class SequenceAlignmentWunsch extends DynamicProgramming {
 			   matrix[i][j] = scoreTable[i][j].getScore();
 		   }
 	   }
-	   return matrix;
+	   return matrix;*/
+	   return scoreTable;
 	}
    
    /**
@@ -149,5 +152,24 @@ public class SequenceAlignmentWunsch extends DynamicProgramming {
     	  return true;
       else
     	  return false;
+   }
+   
+   public ArrayList<Cell> getTracebackPath()
+   {
+	 //Call get score table first
+		  //loadScoreTable();
+	   
+	      Cell currentCell = scoreTable[scoreTable.length - 1][scoreTable[0].length - 1];
+	      ArrayList<Cell> cellList = new ArrayList<Cell>();
+	      //Start from the bottom right of the score table.
+	      
+	      cellList.add(currentCell);
+	      while (!isTraceBackFinished(currentCell)) {
+  
+	    	  currentCell = currentCell.getPrevCell();
+	    	  cellList.add(currentCell);
+	      }
+
+	      return cellList;
    }
 }

@@ -155,12 +155,12 @@ public class Grid
 		label.layoutXProperty().bind(pane.widthProperty().subtract(label.widthProperty()).divide(2));
 		label.layoutYProperty().bind(pane.heightProperty().subtract(label.heightProperty()).divide(2));
 		if(lightMe)
-		label.setStyle("-fx-background-color:rgba(255,255,153,1);");
+		pane.setStyle("-fx-background-color:rgba(255,255,153,1);");
 		else
-		label.setStyle("-fx-background-color:rgba(0,0,255,0);");
+		pane.setStyle("-fx-background-color:rgba(0,0,255,0);");
 
 		//colours are fun!
-		pane.setStyle("-fx-border-style:solid; -fx-border-color:white; -fx-background-color: #CCCCCC;");
+		//pane.setStyle("-fx-border-style:solid; -fx-border-color:white; -fx-background-color: #CCCCCC;");
 		
 		//coordinates go here
 		GridPane.setConstraints(pane, x, y);

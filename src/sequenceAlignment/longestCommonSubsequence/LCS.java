@@ -1,5 +1,7 @@
 package sequenceAlignment.longestCommonSubsequence;
 
+import java.util.ArrayList;
+
 import sequenceAlignment.Cell;
 import sequenceAlignment.DynamicProgramming;
 
@@ -105,11 +107,11 @@ public class LCS extends DynamicProgramming{
 	}
 	
 
-	public int[][] getScoreTable() {
+	public Cell[][] getScoreTable() {
 		loadScoreTable();
 		   
 		 //convert score table from Cell object to Integers.
-		 int[][] matrix = new int[scoreTable.length][scoreTable[0].length];
+		 /*int[][] matrix = new int[scoreTable.length][scoreTable[0].length];
 		 for(int i = 0; i < matrix.length; i++)
 		 {
 			 for(int j = 0; j < matrix[i].length; j++)
@@ -117,6 +119,42 @@ public class LCS extends DynamicProgramming{
 				 matrix[i][j] = scoreTable[i][j].getScore();
 			 }
 		 }
-		 return matrix;
+		 return matrix;*/
+		 return scoreTable;
 	}
+	
+	 public ArrayList<Cell> getTracebackPath()
+	   {
+		 //Call get score table first
+			  //loadScoreTable();
+		   
+		      Cell currentCell = scoreTable[scoreTable.length - 1][scoreTable[0].length - 1];
+		      ArrayList<Cell> cellList = new ArrayList<Cell>();
+		      //Start from the bottom right of the score table.
+		      
+		      cellList.add(currentCell);
+		      while (!isTraceBackFinished(currentCell)) {
+	  
+		    	  currentCell = currentCell.getPrevCell();
+		    	  cellList.add(currentCell);
+		      }
+
+		      return cellList;
+	   }
+	 
+	   /**
+		 * Method Name : isTraceBackFinished
+		 * Purpose:	Checks whether the next step in the trace is the end
+		 * 
+		 * Parameters : currentCell - The current cell being examined
+		 * 
+		 * Return : A boolean stating whether the trace back is finished or not
+		 **/
+	   private boolean isTraceBackFinished(Cell currentCell) {
+		  //If we reach the left bound of the array then we are finished
+	      if (currentCell.getPrevCell() == null)
+	    	  return true;
+	      else
+	    	  return false;
+	   }
 }

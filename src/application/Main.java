@@ -1,11 +1,13 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
+import sequenceAlignment.Cell;
 import sequenceAlignment.longestCommonSubsequence.LCS;
 import sequenceAlignment.needlemanWunsch.SequenceAlignmentWunsch;
 import sequenceAlignment.smithWaterman.Smith_waterman;
@@ -43,6 +45,7 @@ public class Main extends Application {
 	HBox hboxSequence1 = new HBox();
 	HBox hboxSequence2 = new HBox();
 	VBox vboxSequences = new VBox();
+	HBox hboxBottomBox = new HBox();
 	GridPane grid = new GridPane();
 	StackPane stack = new StackPane();
 
@@ -52,6 +55,7 @@ public class Main extends Application {
 	Button btnCreate = new Button("Create Grid");
 	Button btnClear = new Button("Clear");
 	Button btnTest = new Button("Run Algorithm");
+	Button btnNext = new Button("Next Traceback");
 	CheckBox checkLCS = new CheckBox("LCS");
 	CheckBox checkNMW = new CheckBox("Needleman Wunsch");
 	CheckBox checkSWM = new CheckBox("Smith Waterman");
@@ -100,6 +104,9 @@ public class Main extends Application {
 			hbox.setPadding(new Insets(5, 5, 5, 5));
 			hbox.setSpacing(10);
 
+			//This HBox is for the bottom
+			hboxBottomBox.setSpacing(10);
+			hboxBottomBox.getChildren().add(btnNext);
 			
 			//TEXT INPUT TEXT FORMATTER ALLOWS ONLY A C G T and U to be entered
 			//Text inputs cannot share the same formatter so we need two.
@@ -155,6 +162,7 @@ public class Main extends Application {
 			mainLayout.setTop(hbox);
 			mainLayout.setRight(stack);
 			mainLayout.setCenter(scroll);
+			mainLayout.setBottom(hboxBottomBox);
 			mainScene = new Scene(mainLayout, 900, 400);
 
 			// create the window and initialize
@@ -245,14 +253,14 @@ public class Main extends Application {
 				case LCS:
 					// Run an instance of the algorithm
 					LCS lcs = new LCS(txtInput.getText(), txtInput2.getText());
-					int[][] lcsTable = lcs.getScoreTable();
-
+					Cell[][] lcsTable = lcs.getScoreTable();
+					ArrayList<Cell> LCSCellList = lcs.getTracebackPath();
+					
 					// For the LCS algorithm we skip row & column zero because its always the same
 					for (int i = 1; i < lcsTable.length; i++)
 						for (int j = 1; j < lcsTable[i].length; j++)
-							mainGrid.addItem(lcsTable[i][j], j, i,false);
+							mainGrid.addItem(lcsTable[i][j].getScore(), j, i, LCSCellList.contains(lcsTable[i][j]));
 
-					//mainGrid.addItem(2, 2, 2, true);
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Longest common subsequence:");
 					Label commonSubsequence = new Label(lcs.getLCSTraceback());
@@ -267,14 +275,16 @@ public class Main extends Application {
 				case NMW:
 					// Run an instance of the algorithm
 					SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText());
-					int[][] scoreTable = NMW.getScoreTable();
-
+					Cell[][] cellTable = NMW.getScoreTable();
+					ArrayList<Cell> NMWCellList = NMW.getTracebackPath();
 					// For the needleman wunsch algorithm we skip row & column zero because its
 					// always the same
-					for (int i = 1; i < scoreTable.length; i++)
-						for (int j = 1; j < scoreTable[i].length; j++)
-							mainGrid.addItem(scoreTable[i][j], j, i,false);
-
+					for (int i = 1; i < cellTable.length; i++)
+						for (int j = 1; j < cellTable[i].length; j++)
+						{
+							mainGrid.addItem(cellTable[i][j].getScore(), j, i, NMWCellList.contains(cellTable[i][j]));
+						}
+						
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Aligned Sequences:");
 					Label alignment1 = new Label(NMW.getAlignment()[0] + "\n" + NMW.getAlignment()[1]);

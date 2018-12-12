@@ -42,6 +42,13 @@ public class Cell {
    }
 
    @Override
+   public boolean equals(Object o)
+   {
+	   if (score == ((Cell) o).getScore() && col == ((Cell) o).getCol() && row == ((Cell) o).getRow())
+		   return true;
+	   return false;
+   }
+   @Override
    public String toString() {
       return "Cell(" + row + ", " + col + "): score=" + score + ", prevCell="
             + prevCell + "]";
