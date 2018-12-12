@@ -1,5 +1,6 @@
 package application;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -98,7 +99,7 @@ public class Grid
 				grid.getChildren().add(pane);
 			}
 		}
-					
+		
 		grid.setVisible(true);
 	}
 	
@@ -176,17 +177,26 @@ public class Grid
 	
 	public void setHighlight(boolean isHighlighted, int x, int y)
 	{
-		System.out.println(numCols + numRows - 1);
-		Node node = grid.getChildren().get((numCols + numRows - 2) + ((x - 1) * (numRows - 1)) + y);
-		
+		Node node = grid.getChildren().get((numRows * numCols) + x + (y * (numCols - 1)));
+
 		if(isHighlighted)
 		{
-			node.setStyle("-fx-background-color: #CCCC77;");
+			node.setStyle("-fx-background-color:rgba(255,255,153,1);");
 		}
 		else
 		{
-			node.setStyle("-fx-background-color: #CCCCCC;");
+			node.setStyle("-fx-background-color:rgba(0,0,255,0);");
 		}
+	}
+	
+	public boolean isHighlighted(int x, int y)
+	{
+		Node node = grid.getChildren().get((numRows * numCols) + x + (y * (numCols - 1)));
+		
+		if (node.getStyle() == "-fx-background-color:rgba(255,255,153,1);")
+			return true;
+		else
+			return false;
 	}
 	
 	//Returns the sequences that the grid was created with.

@@ -52,15 +52,18 @@ public class Main extends Application {
 	//These are our interactable GUI objects
 	TextField txtInput = new TextField();
 	TextField txtInput2 = new TextField();
-	Button btnCreate = new Button("Create Grid");
 	Button btnClear = new Button("Clear");
 	Button btnTest = new Button("Run Algorithm");
-	Button btnNext = new Button("Next Traceback");
+	Button btnNext = new Button("Get Traceback");
 	CheckBox checkLCS = new CheckBox("LCS");
 	CheckBox checkNMW = new CheckBox("Needleman Wunsch");
 	CheckBox checkSWM = new CheckBox("Smith Waterman");
+	Label bottomSequenceLabel1 = new Label("Sequence 1:");
+	Label bottomSequenceLabel2 = new Label("Sequence 2:");
 	// create the Grid class, this is to get it out of main
 	Grid mainGrid = new Grid(grid);
+	
+	ArrayList<Cell> tracebackCellList;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -79,7 +82,7 @@ public class Main extends Application {
 			// First we set up the vbox & hbox's which contain the top layout with the text fields and buttons
 			
 			//This first HBox contains the first sequence text input box
-			Label sequenceLabel = new Label("Sequence 1:");			
+			Label sequenceLabel = new Label("Sequence 1:");
 			hboxSequence1.setSpacing(10);
 			hboxSequence1.setAlignment(Pos.CENTER_LEFT);
 			hboxSequence1.getChildren().addAll(sequenceLabel, txtInput);
@@ -93,20 +96,22 @@ public class Main extends Application {
 			//This VBox contains positions the text inputs on top of one another.
 			vboxSequences.setSpacing(10);
 			vboxSequences.setMaxSize(300, 300);
-			vboxSequences.setPadding(new Insets(15, 12, 10, 15));
+			vboxSequences.setPadding(new Insets(15, 10, 10, 15));
 			vboxSequences.getChildren().addAll(hboxSequence1, hboxSequence2);
 			
 			//Finally this last HBox organized the text inputs with the buttons and check boxes.
 			hbox.getChildren().add(vboxSequences);
 			hbox.setAlignment(Pos.CENTER);
-			hbox.getChildren().addAll(btnCreate, btnClear, btnTest, checkLCS, checkNMW, checkSWM);
+			hbox.getChildren().addAll(btnTest, btnClear, checkLCS, checkNMW, checkSWM);
 			hbox.setBorder(Border.EMPTY);
 			hbox.setPadding(new Insets(5, 5, 5, 5));
 			hbox.setSpacing(10);
 
-			//This HBox is for the bottom
-			hboxBottomBox.setSpacing(10);
-			hboxBottomBox.getChildren().add(btnNext);
+			//This HBox is for the bottom box
+			hboxBottomBox.setAlignment(Pos.CENTER_LEFT);
+			hboxBottomBox.setSpacing(30);
+			hboxBottomBox.setPadding(new Insets(15, 10, 10, 15));
+			hboxBottomBox.getChildren().addAll(btnNext, bottomSequenceLabel1, bottomSequenceLabel2);
 			
 			//TEXT INPUT TEXT FORMATTER ALLOWS ONLY A C G T and U to be entered
 			//Text inputs cannot share the same formatter so we need two.
@@ -203,17 +208,6 @@ public class Main extends Application {
 			
 			// BUTTON EVENT HANDLERS GO BELOW HERE
 
-			
-			// Create button creates the grid
-			btnCreate.setOnAction(e -> {
-				// Make sure the user has inputed some sequences
-				if (!txtInput.getText().isEmpty() && !txtInput2.getText().isEmpty()) {
-					grid = new GridPane();
-					mainGrid = new Grid(grid);
-					setupGrid();
-					mainGrid.createGrid(txtInput, txtInput2);
-				}
-			});
 
 			// Clear button resets the grid view.
 			btnClear.setOnAction(e -> {
@@ -225,6 +219,9 @@ public class Main extends Application {
 				stack.getChildren().clear();
 				mainLayout.getChildren().remove(grid);
 				grid.setVisible(false);
+				
+				bottomSequenceLabel1.setText("Sequence 1:");
+				bottomSequenceLabel2.setText("Sequence 2:");
 
 			});
 
@@ -232,18 +229,23 @@ public class Main extends Application {
 			btnTest.setOnAction(e -> {
 
 				// If the create button hasn't been pressed, don't run the algorithm
-				if (!grid.isVisible())
+				if (txtInput.getText().isEmpty() || txtInput2.getText().isEmpty())
 					return;
+				
 				//If the sequences have been changed we need to recreate the grid
 				String[] inputedSequences = mainGrid.getSequences();
 				if (txtInput.getText() != inputedSequences[0]|| txtInput2.getText() != inputedSequences[1] )
 				{
 					btnClear.fire();
-					btnCreate.fire();
-				}
-				
+				}			
 				// Reset the stackpanes info so we dont write on top of existing data
 				stack.getChildren().clear();
+				
+				//Create the grid
+				grid = new GridPane();
+				mainGrid = new Grid(grid);
+				setupGrid();
+				mainGrid.createGrid(txtInput, txtInput2);
 
 				Label alignmentLabel;
 				// Run the selected algorithm
@@ -254,16 +256,19 @@ public class Main extends Application {
 					// Run an instance of the algorithm
 					LCS lcs = new LCS(txtInput.getText(), txtInput2.getText());
 					Cell[][] lcsTable = lcs.getScoreTable();
-					ArrayList<Cell> LCSCellList = lcs.getTracebackPath();
+					tracebackCellList = lcs.getTracebackPath();
 					
 					// For the LCS algorithm we skip row & column zero because its always the same
-					for (int i = 1; i < lcsTable.length; i++)
-						for (int j = 1; j < lcsTable[i].length; j++)
-							mainGrid.addItem(lcsTable[i][j].getScore(), j, i, LCSCellList.contains(lcsTable[i][j]));
+					for (int i = 0; i < lcsTable.length; i++)
+						for (int j = 0; j < lcsTable[i].length; j++)
+							mainGrid.addItem(lcsTable[i][j].getScore(), j+1, i+1, tracebackCellList.contains(lcsTable[i][j]));
 
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Longest common subsequence:");
 					Label commonSubsequence = new Label(lcs.getLCSTraceback());
+					//Bottom box info
+					bottomSequenceLabel1.setText("Sequence 1: " + lcs.getLCSTraceback());
+					bottomSequenceLabel2.setText("Sequence 2:");
 
 					StackPane.setAlignment(alignmentLabel, Pos.TOP_CENTER);
 					stack.getChildren().add(alignmentLabel);
@@ -276,19 +281,22 @@ public class Main extends Application {
 					// Run an instance of the algorithm
 					SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText());
 					Cell[][] cellTable = NMW.getScoreTable();
-					ArrayList<Cell> NMWCellList = NMW.getTracebackPath();
+					tracebackCellList = NMW.getTracebackPath();
 					// For the needleman wunsch algorithm we skip row & column zero because its
 					// always the same
-					for (int i = 1; i < cellTable.length; i++)
-						for (int j = 1; j < cellTable[i].length; j++)
+					for (int i = 0; i < cellTable.length; i++)
+						for (int j = 0; j < cellTable[i].length; j++)
 						{
-							mainGrid.addItem(cellTable[i][j].getScore(), j, i, NMWCellList.contains(cellTable[i][j]));
+							mainGrid.addItem(cellTable[i][j].getScore(), j+1, i+1, tracebackCellList.contains(cellTable[i][j]));
 						}
 						
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Aligned Sequences:");
 					Label alignment1 = new Label(NMW.getAlignment()[0] + "\n" + NMW.getAlignment()[1]);
-
+					//Bottom box info
+					bottomSequenceLabel1.setText("Sequence 1: " + NMW.getAlignment()[0]);
+					bottomSequenceLabel2.setText("Sequence 2: " + NMW.getAlignment()[1]);
+					
 					StackPane.setAlignment(alignmentLabel, Pos.TOP_CENTER);
 					StackPane.setAlignment(alignment1, Pos.CENTER);
 					stack.getChildren().add(alignmentLabel);
@@ -332,7 +340,61 @@ public class Main extends Application {
 				}
 			});
 
-		
+			
+			btnNext.setOnAction(e -> {
+				
+				// If the create button hasn't been pressed, don't run the algorithm
+				if (!grid.isVisible())
+					return;
+				
+				//Reset the initially highlighted cells if they are all highlighted.
+				Cell lastCell = tracebackCellList.get(tracebackCellList.size() - 1);
+				if (mainGrid.isHighlighted(lastCell.getCol(), lastCell.getRow()))
+				{
+					for (int i = 1; i < tracebackCellList.size(); i++)
+						mainGrid.setHighlight(false, tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow());
+					bottomSequenceLabel1.setText("Sequence 1: ");
+					bottomSequenceLabel2.setText("Sequence 2: ");
+					//Reseting counts as a click so we dont perform the rest of the code.
+					return;
+				}
+				
+				//Highlight the next cell in the list
+				for (int i = 1; i < tracebackCellList.size(); i++)
+				{
+					if (mainGrid.isHighlighted(tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow()))
+						continue;
+					else
+					{
+						//Highlight the next item
+						mainGrid.setHighlight(true, tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow());
+						
+						//Get the aligned sequence up to the current cell.
+						switch (selectedAlgorithm) {
+
+						case LCS:
+							LCS lcs = new LCS(txtInput.getText(), txtInput2.getText());
+							bottomSequenceLabel1.setText("Sequence 1: " + lcs.getLCSTraceback(tracebackCellList.get(i)));
+							bottomSequenceLabel2.setText("Sequence 2:");
+							break;
+						case NMW:
+							SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText());				
+							bottomSequenceLabel1.setText("Sequence 1: " + NMW.getAlignment(tracebackCellList.get(i))[0]);
+							bottomSequenceLabel2.setText("Sequence 2: " +  NMW.getAlignment(tracebackCellList.get(i))[1]);
+							break;
+						case SWM:
+							break;
+							
+						default: break;
+						}
+						//Break out of loop since we highlighted a cell.
+						return;
+					}
+				}
+
+			});
+
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

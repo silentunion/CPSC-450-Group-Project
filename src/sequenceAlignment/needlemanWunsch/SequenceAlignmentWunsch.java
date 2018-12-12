@@ -34,7 +34,7 @@ public class SequenceAlignmentWunsch extends DynamicProgramming {
    public String[] getAlignment() {
 	  
 	  //Call get score table first
-	  //loadScoreTable();
+	  loadScoreTable();
 	   
 	  StringBuffer seq1Align = new StringBuffer();
       StringBuffer seq2Align = new StringBuffer();
@@ -63,6 +63,40 @@ public class SequenceAlignmentWunsch extends DynamicProgramming {
             seq2Align.toString() };
 
       return alignments;
+   }
+   
+   public String[] getAlignment(Cell stopCell)
+   {
+	   //Call get score table first
+		  loadScoreTable();
+		   
+		  StringBuffer seq1Align = new StringBuffer();
+	      StringBuffer seq2Align = new StringBuffer();
+	      Cell currentCell = scoreTable[scoreTable.length - 1][scoreTable[0].length - 1];
+	      //Start from the bottom right of the score table.
+	      
+	      while (!currentCell.equals(stopCell)) {
+	         //If cell points left than grab the next character otherwise add a gap
+	         if (currentCell.getCol() - currentCell.getPrevCell().getCol() == 1) {
+	            seq1Align.insert(0, sequence1.charAt(currentCell.getCol() - 1));
+	         } else {
+	            seq1Align.insert(0, '-');
+	         }
+	       
+	   	  //If cell points up then grab the next character otherwise add a gap
+	         if (currentCell.getRow() - currentCell.getPrevCell().getRow() == 1) {
+	            seq2Align.insert(0, sequence2.charAt(currentCell.getRow() - 1));
+	         } else {
+	            seq2Align.insert(0, '-');
+	         }
+	 
+	         currentCell = currentCell.getPrevCell();
+	      }
+
+	      String[] alignments = new String[] { seq1Align.toString(),
+	            seq2Align.toString() };
+
+	      return alignments;
    }
    
    /**

@@ -89,11 +89,33 @@ public class LCS extends DynamicProgramming{
 		}
 	}
 	
+	//Call this to get the full LCS for the score matrix
 	public String getLCSTraceback()
 	{
 		StringBuffer lCSBuf = new StringBuffer();
 		Cell currentCell = scoreTable[scoreTable.length - 1][scoreTable[0].length - 1];
 	    while (currentCell.getScore() > 0)
+	    {
+	    	Cell prevCell = currentCell.getPrevCell();
+	        if ((currentCell.getRow() - prevCell.getRow() == 1 && currentCell.getCol() - prevCell.getCol() == 1)
+	               && currentCell.getScore() == prevCell.getScore() + 1) 
+	        {
+	            lCSBuf.insert(0, sequence1.charAt(currentCell.getCol() - 1));
+	        }
+	        currentCell = prevCell;
+	      }
+	    return lCSBuf.toString();
+	}
+	
+	//Call this to get the traceback up to a certain point within the score matrix.
+	public String getLCSTraceback(Cell stopCell)
+	{
+		//Load table first
+		loadScoreTable();
+		
+		StringBuffer lCSBuf = new StringBuffer();
+		Cell currentCell = scoreTable[scoreTable.length - 1][scoreTable[0].length - 1];
+	    while (!currentCell.equals(stopCell))
 	    {
 	    	Cell prevCell = currentCell.getPrevCell();
 	        if ((currentCell.getRow() - prevCell.getRow() == 1 && currentCell.getCol() - prevCell.getCol() == 1)
