@@ -190,7 +190,7 @@ public class Smith_waterman
 	   }*/
 	public static void main(String[] args)
 	{
-		Smith_waterman test = new Smith_waterman("aaccgg","acg",3,-3,-2);
+		Smith_waterman test = new Smith_waterman("dasdadas","gggasdtrtad",3,-3,-2);
 		//runAlg(test);
 		/* and  
 		;
