@@ -302,7 +302,7 @@ public class Main extends Application {
 					Integer[][] matrix = smith.getMatrix();
 					
 					for (int i = 1; i < matrix.length+1; i++)
-						for (int j = 1; j < matrix[i].length+1; j++)
+						for (int j = 1; j < matrix[i-1].length+1; j++)
 							mainGrid.addItem(matrix[i-1][j-1], j, i,false);
 					
 					alignmentLabel = new Label("Aligned Sequences:");
