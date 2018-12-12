@@ -1,5 +1,7 @@
 package application;
 
+import java.util.Stack;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -248,8 +250,9 @@ public class Main extends Application {
 					// For the LCS algorithm we skip row & column zero because its always the same
 					for (int i = 1; i < lcsTable.length; i++)
 						for (int j = 1; j < lcsTable[i].length; j++)
-							mainGrid.addItem(lcsTable[i][j], j, i);
+							mainGrid.addItem(lcsTable[i][j], j, i,false);
 
+					//mainGrid.addItem(2, 2, 2, true);
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Longest common subsequence:");
 					Label commonSubsequence = new Label(lcs.getLCSTraceback());
@@ -270,7 +273,7 @@ public class Main extends Application {
 					// always the same
 					for (int i = 1; i < scoreTable.length; i++)
 						for (int j = 1; j < scoreTable[i].length; j++)
-							mainGrid.addItem(scoreTable[i][j], j, i);
+							mainGrid.addItem(scoreTable[i][j], j, i,false);
 
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Aligned Sequences:");
@@ -290,15 +293,28 @@ public class Main extends Application {
 					
 					for (int i = 1; i < matrix.length; i++)
 						for (int j = 1; j < matrix[i].length; j++)
-							mainGrid.addItem(matrix[i][j], j, i);
+							mainGrid.addItem(matrix[i][j], j, i,false);
 					
 					alignmentLabel = new Label("Aligned Sequences:");
 					Label alignment2 = new Label(smith.getAlignment()+ "\n" +smith.getAlignment2());
+					
+					//Stack<Smith_waterman.> myStack = smith.getTraceback();
+				//	Stack<Smith_waterman.Coord> myStack = smith.getTraceback();
+					
+					//mainGrid.addItem(2, 2, 2, true);
+					
+				/*	for(Smith_waterman.Coord item: myStack)
+					{
+						System.out.println(item.getX());
+						System.out.println(item.getY());
+						//mainGrid.addItem(matrix[item.getY()][item.getX()], item.getX(), item.getY(), true);
+					}*/
+					
 					StackPane.setAlignment(alignmentLabel, Pos.TOP_CENTER);
 					StackPane.setAlignment(alignment2, Pos.CENTER);
 					stack.getChildren().add(alignmentLabel);
 					stack.getChildren().add(alignment2);
-					
+
 					break;
 
 				default:

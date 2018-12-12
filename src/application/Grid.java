@@ -143,7 +143,7 @@ public class Grid
 	 Method to add a single item, just in case it is preferred.
 	 Takes in an int and coords and adds to the grid at the desired coords
 	 */
-	public void addItem(int item, int x, int y)
+	public void addItem(int item, int x, int y, boolean lightMe)
 	{
 		//label goes inside the pane which goes inside the grid coord
 		Label label = new Label(Integer.toString(item));
@@ -154,7 +154,11 @@ public class Grid
 		//centers the label
 		label.layoutXProperty().bind(pane.widthProperty().subtract(label.widthProperty()).divide(2));
 		label.layoutYProperty().bind(pane.heightProperty().subtract(label.heightProperty()).divide(2));
-		
+		if(lightMe)
+		label.setStyle("-fx-background-color:rgba(255,255,153,1);");
+		else
+		label.setStyle("-fx-background-color:rgba(0,0,255,0);");
+
 		//colours are fun!
 		pane.setStyle("-fx-border-style:solid; -fx-border-color:white; -fx-background-color: #CCCCCC;");
 		
@@ -167,6 +171,8 @@ public class Grid
 		
 		grid.getChildren().add(pane);
 	}
+	
+	
 	
 	public void setHighlight(boolean isHighlighted, int x, int y)
 	{

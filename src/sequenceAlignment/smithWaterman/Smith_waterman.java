@@ -24,8 +24,15 @@ public class Smith_waterman
 	//scoring matrix for A and B
 	private static Integer [][] scoringMatrix;
 	
-	private StringBuffer seq1Align;
-	private StringBuffer seq2Align;
+	private static StringBuffer seq1Align;
+	private static StringBuffer seq2Align;
+	
+	private static Stack<Coord> myPositions;
+	
+	public Stack<Coord> getTraceback()
+	{
+		return myPositions;
+	}
 	
 	public Integer[][] getMatrix()
 	{
@@ -66,6 +73,8 @@ public class Smith_waterman
 		
 		seq1Align = new StringBuffer();
 	    seq2Align = new StringBuffer();
+	    
+	    myPositions = new Stack<Coord>();
 
 		scoringMatrix= new Integer[B.length()+1][A.length()+1];
 		//fill it with 0s in 1st row and column and -1s everywhere else
@@ -80,7 +89,7 @@ public class Smith_waterman
 			}
 		}
 		
-		runAlg(this,seq1Align,seq2Align);
+		runAlg(this);
 	}
 	//checks if two character match, miss or if one is a gap
 	public static int checkScore(char a, char b)
@@ -181,12 +190,14 @@ public class Smith_waterman
 	   }*/
 	public static void main(String[] args)
 	{
-		Smith_waterman test = new Smith_waterman("abba","baa");
+		Smith_waterman test = new Smith_waterman("TGTTACGG","GGTTGACTA",3,-3,-2);
 		//runAlg(test);
-		
+		/* and  
+		;
+		 */
 	}
 	
-	public static void runAlg(Smith_waterman myMatrix, StringBuffer seq1Align,StringBuffer seq2Align)
+	public static void runAlg(Smith_waterman myMatrix)
 	{
 		
 
@@ -204,7 +215,7 @@ public class Smith_waterman
 		myMatrix.print();
 		
 		Stack<Integer> myValues = new Stack<Integer>();
-		Stack<Coord> myPositions = new Stack<Coord>();
+		
 		Stack<Direction> myDirections = new Stack<Direction>();
 		//Stack<Cell> myCells = new Stack<Cell>();
 		//Cell cell= myMatrix.new Cell();
@@ -236,8 +247,10 @@ public class Smith_waterman
 		//read through again and add all = max
 		System.out.println(allMax);
 	
-		
-	    
+		/*System.out.println(myRow+""+myCol);
+		System.out.println(B.charAt(myRow-1)+""+A.charAt(myCol-1));
+		seq1Align.insert(0, A.charAt(myCol-1));
+		seq2Align.insert(0, B.charAt(myRow-1));*/
 	
 	
 	    System.out.println(seq1Align);
@@ -273,7 +286,7 @@ public class Smith_waterman
 	    		prev= myMatrix.new Coord(myRow+1,myCol+1);
 	    	}
 	    	
-	    	pos = myMatrix.new Coord(myRow+1,myCol+1);
+	    	pos = myMatrix.new Coord(myRow,myCol);
 	    	System.out.println("at position "+pos);
 	    	myPositions.push(pos);
 	    	//System.out.println(myDirections.peek());
@@ -367,7 +380,8 @@ public class Smith_waterman
 	    	System.out.println(left);
 	    	System.out.println(diag);
 	    	System.out.println(up);
-
+	    	
+	    	
 	    	next=max(left,
 					diag,
 					up,
@@ -376,6 +390,10 @@ public class Smith_waterman
 	    		next=diag;
 	    	
 	    	System.out.println("next "+next);
+	    	
+	    	//check diag 
+	    	/*if(diag==0)
+	    		break;*/
 	    	
 	    	if(next==0)
 	    	{
@@ -412,17 +430,13 @@ public class Smith_waterman
 	    	
 	    	System.out.println("going is "+going);
 	    	myDirections.push(going);
-	    	System.out.println(myRow);
-	    	System.out.println(myCol);
+	    	System.out.println(myRow+", "+myCol);
 
 	    	System.out.print("compare "+B.charAt(myRow));
     		System.out.println(" with "+A.charAt(myCol));
-
-	    	switch(going)
+    			    	switch(going)
     		{
     		case start:
-    			seq1Align.insert(0, B.charAt(myCol));
-  			    seq2Align.insert(0, A.charAt(myRow));
     			break;
     		case up:
     			seq1Align.insert(0, '_');
@@ -449,9 +463,22 @@ public class Smith_waterman
 	    	coming=going;
 	    	current=next;
 	    	
+	    	if(diag==0)
+	    	{
+	    		System.out.print("LOOK HERE "+B.charAt(myRow-1));
+	    		System.out.println(" and "+A.charAt(myCol-1));	 
+	    		if(A.charAt(myCol-1)==B.charAt(myRow-1))
+	    		{
+	    		seq1Align.setCharAt(0, A.charAt(myCol-1));
+	    		seq2Align.setCharAt(0, B.charAt(myRow-1));
+	    		}
+	    		break;
+	    	}
+
+	    	
 	    	System.out.println("END OF ITERATION\n");
-	    	//if(next==0)
-	    		//break;
+	    
+	    
 	    	//skip=false;
 	    }
 	    
@@ -612,6 +639,23 @@ public class Smith_waterman
 	{
 		int x;
 		int y;
+		
+		public int getX() {
+			return x;
+		}
+
+		public void setX(int x) {
+			this.x = x;
+		}
+
+		public int getY() {
+			return y;
+		}
+
+		public void setY(int y) {
+			this.y = y;
+		}
+		
 		
 		public Coord(int a, int b)
 		{
