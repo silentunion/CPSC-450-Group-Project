@@ -324,8 +324,8 @@ public class Main extends Application {
 					{
 						System.out.println(item.getX());
 						System.out.println(item.getY());
-						mainGrid.addItem(matrix[item.getX()][item.getY()], item.getY()+1, item.getX()+1, true);
-					
+						//mainGrid.addItem(matrix[item.getX()][item.getY()], item.getY()+1, item.getX()+1, true);
+						mainGrid.setHighlight(true, item.getY(), item.getX());
 					}
 					
 					StackPane.setAlignment(alignmentLabel, Pos.TOP_CENTER);
@@ -346,7 +346,7 @@ public class Main extends Application {
 				// If the create button hasn't been pressed, don't run the algorithm
 				if (!grid.isVisible())
 					return;
-				k++;
+				
 				if(selectedAlgorithm==Main.algorithmType.LCS || selectedAlgorithm==Main.algorithmType.NMW)
 				{
 				//Reset the initially highlighted cells if they are all highlighted.
@@ -402,29 +402,36 @@ public class Main extends Application {
 				{
 					
 					
-					System.out.println("WE MADE IT HERE");
+					//System.out.println("WE MADE IT HERE");
 					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText());
 					ArrayList<String> partialAligns= smith.getPartialAligns();
 					ArrayList<String> partialAligns2= smith.getPartialAligns2();
 					ArrayList<Smith_waterman.Coord> myTrace = smith.getTraceback();
-					Integer[][] matrix = smith.getMatrix();
-					
-					//trying to reset the highlights, doesnt work
-					for (int i = 1; i < matrix.length+1; i++)
-						for (int j = 1; j < matrix[i-1].length+1; j++)
-							mainGrid.addItem(matrix[i-1][j-1], j, i,false);
-					
 					if(k>partialAligns.size()-1)
 						k=0;
 					
-						Smith_waterman.Coord item = myTrace.get(k);				
-						//matrix[item.getX()][item.getY()],
-						//-100
-						mainGrid.addItem(matrix[item.getX()][item.getY()], item.getY()+1, item.getX()+1, true);
-						bottomSequenceLabel1.setText("Sequence 1: " + partialAligns.get(k));
-						bottomSequenceLabel2.setText("Sequence 2: " + partialAligns2.get(k));
 					
-					
+					Smith_waterman.Coord item = myTrace.get(k);
+
+					//reset highlights
+					if(k==0)
+					{
+						for (int i = 1; i < myTrace.size(); i++)
+							mainGrid.setHighlight(false, myTrace.get(i).getY(), myTrace.get(i).getX());
+						bottomSequenceLabel1.setText("Sequence 1: ");
+						bottomSequenceLabel2.setText("Sequence 2: ");
+					}
+				
+
+								
+					//matrix[item.getX()][item.getY()],
+					//-100
+					//mainGrid.addItem(matrix[item.getX()][item.getY()], item.getY()+1, item.getX()+1, true);
+					mainGrid.setHighlight(true, item.getY(), item.getX());
+					bottomSequenceLabel1.setText("Sequence 1: " + partialAligns.get(k));
+					bottomSequenceLabel2.setText("Sequence 2: " + partialAligns2.get(k));
+
+					k++;
 				}
 
 			});

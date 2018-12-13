@@ -236,139 +236,36 @@ public class Smith_waterman
 		//read through again and add all = max
 		System.out.println(allMax);
 	
-		/*System.out.println(myRow+""+myCol);
-		System.out.println(B.charAt(myRow-1)+""+A.charAt(myCol-1));
-		seq1Align.insert(0, A.charAt(myCol-1));
-		seq2Align.insert(0, B.charAt(myRow-1));*/
-	
 	
 	    System.out.println(seq1Align);
 	    System.out.println(seq2Align);		
 	    Coord pos;
 	    Coord myStringpos;
-	   // Stack<Coord> mysPos=new Stack<Coord>();
 	    int next=-1;
 	    int current=max;
 	    Direction going=Direction.blank;
 	    Direction coming=Direction.start;
 		myDirections.push(coming);
-	   // myRow--;
-	  //  myCol--;
-	   // boolean skip=false;
+
 	    while(current>0)
 	    {
 	    	System.out.println("current "+current);
 	    	myValues.push(current);
 	    	if(!myPositions.isEmpty())
 	    	{
-	    		/*if(myPositions.size()>1)
-	    		{	
-	    			prev2=myPositions.elementAt(myPositions.size()-2);
-	    	    	System.out.println("prev prev "+prev2);
-
-	    		}*/
 		    	System.out.println("previous pos : "+myPositions.peek());
 		    	prev=myPositions.peek();
-		    	
-		    //	skip=true;
 	    	}
-	    	else
-	    	{
-	    		//prev= myMatrix.new Coord(myRow,myCol);
-	    	}
-	    	
+		
 	    	pos = myMatrix.new Coord(myRow,myCol);
 	    	myStringpos= myMatrix.new Coord(myRow-1,myCol-1);
 	    	System.out.println("at position "+pos);
 	    	System.out.println("chars at "+myStringpos.x+" and "+myStringpos.y);
 	    	System.out.println(A.charAt(myStringpos.y)+" "+B.charAt(myStringpos.x));
 	    	myPositions.push(pos);
-	    	//mysPos.push(myStringpos);
-	    	//System.out.println(myDirections.peek());
-	    	//System.out.println(prev+" "+pos);
-	    	//System.out.println(skip);
-	    //	if(skip)
-	    	{
-    			System.out.println("coming is "+coming);
-    			//System.out.println(going);
-
-
-	    			    		//System.out.println(myRow);
-	    		//System.out.println(myCol);
-
-	    		
-	    		/*switch(coming)
-	    		{
-	    		case start:
-	    			seq1Align.insert(0, A.charAt(myCol-1));
-	  			    seq2Align.insert(0, B.charAt(myRow-1));
-	    			break;
-	    		case up:
-	    			seq1Align.insert(0, '_');
-	    			seq2Align.insert(0, B.charAt(myRow-1));
-	    			break;
-	    		case left:
-	    			seq2Align.insert(0, '_');
-	    			seq1Align.insert(0, A.charAt(myCol-1));
-	    			break;
-	    		case diagonal:
-	    			seq1Align.insert(0, A.charAt(myCol-1));
-	  			    seq2Align.insert(0, B.charAt(myRow-1));
-	    			break;
-	    		default:
-	    			System.out.println("bad");
-
-	    			break;
-	    		}*/
-
-	    		//if(prev.x-pos.x==1)
-	    		if(prev.x-myRow==1)
-	    		//if(B.charAt(myRow-1)==A.charAt(myCol-1))
-	    		{
-	    			
-	    			//seq2Align.insert(0, B.charAt(prev.x-1));
-	    			//seq2Align.insert(0, B.charAt(myRow-1));
-	    			
-
-	    		}
-	    		else
-	    		{
-	    			//seq2Align.insert(0, '_');
-	    			//myRow--;
-	    		}
-	    		//if(prev.y-pos.y==1)
-	    		if(prev.y-myCol==1)
-	    		//if(B.charAt(myRow-1)==A.charAt(myCol-1))	
-	    		{		
-	    			//seq1Align.insert(0, B.charAt(prev.y-1));
-	    			//this one appears to be correct
-	    			//seq1Align.insert(0, A.charAt(myCol-1));
-
-	    		}
-	    		else
-	    		{
-	    			//seq1Align.insert(0, '_');
-	    			//myCol=325;
-	    		}
-	    		/*
-	    		with prev.x and prev.y
-	    		_TT_GAC
-				GTTGACT
-				
-				with myrow-1 and mycol-1
-				_GT_TAC
-				GGTTGAC
-				
-				_GT_TAC
-				GGTTGAC
-				
-				_GT_TAC
-				GGTTGAC
-	
-
-	    		 */
-
-	    	}
+	    
+    		System.out.println("coming is "+coming);
+    		
 	    	int diag=scoringMatrix[myRow-1][myCol-1];
 	    	int left=scoringMatrix[myRow][myCol-1];
 	    	int up=scoringMatrix[myRow-1][myCol];
@@ -386,9 +283,7 @@ public class Smith_waterman
 	    	
 	    	System.out.println("next "+next);
 	    	
-	    	//check diag 
-	    	/*if(diag==0)
-	    		break;*/
+	    	
 	    	
 	    	if(next==0)
 	    	{
@@ -427,8 +322,6 @@ public class Smith_waterman
 	    	myDirections.push(going);
 	    	System.out.println(myRow+", "+myCol);
 
-	    //	System.out.print("compare "+B.charAt(myRow));
-    	//	System.out.println(" with "+A.charAt(myCol));
 
 	    	if(diag==0)
 	    	{
@@ -476,8 +369,7 @@ public class Smith_waterman
 	    	partialAligns.add(seq1Align.toString());
 	    	partialAligns2.add(seq2Align.toString());
 	    	
-	    	
-	    	//dir=nextDir;
+
 	    	coming=going;
 	    	current=next;
 	    	
@@ -485,113 +377,11 @@ public class Smith_waterman
 	    	
 	    	System.out.println("END OF ITERATION\n");
 	    
-	    
-	    	//skip=false;
+
 	    }
 	    
 	    
-	    /*
-	    while(next>0)
-		{
-	    	System.out.println("we are at "+myRow +" "+myCol);
-	    	
-	    	
-
-	    	System.out.println("the value is "+scoringMatrix[myRow][myCol]);
-	    	System.out.println("current is "+current);
-	    	myValues.push(current);
-	    //	prevNum=max;
-	    	
-	    	//System.out.println("max was "+next);
-			next= max(scoringMatrix[myRow-1][myCol],
-					scoringMatrix[myRow][myCol-1],
-					scoringMatrix[myRow-1][myCol-1],
-					0);
-			if(next==0)
-				break;
-			
-	    	System.out.println("next is "+next);
-
-	    	//System.out.println("max is "+next);
-
-			pos = myPositions.peek();
-			System.out.println("previous position "+myPositions.peek());		
-
-			//myValues.push(next);
-		//	System.out.println("next biggest is : "+max);
-			
-				
-			//check which one of those was the biggest
-			if(next==scoringMatrix[myRow-1][myCol])
-			{
-				System.out.println(next +" we came from up!");
-			//	seq1Align.insert(0, '_');
-			//    seq2Align.insert(0, B.charAt(myRow-2));
-				myRow--;
-
-				
-			}
-			else if(next==scoringMatrix[myRow][myCol-1])
-			{
-				System.out.println(next + "we came from left!");
-				
-
-			//	seq1Align.insert(0, A.charAt(myCol-2));
-			  //  seq2Align.insert(0, '_');
-				//prev= myMatrix.new Coord(myRow, myCol-1);
-
-				myCol--;
-			}
-			else if(next==scoringMatrix[myRow-1][myCol-1])
-			{
-				
-				System.out.println(next+" we came from diagonal!");
-				
-				
-				//seq1Align.insert(0, A.charAt(myCol-2));
-			  //  seq2Align.insert(0, B.charAt(myRow-2));
-				
-			
-				//prev= myMatrix.new Coord(myRow-1, myCol-1);
-				myRow--;
-				myCol--;
-			}
-			prev= myMatrix.new Coord(myRow, myCol);
-
-			//System.out.println(prev+" "+pos);
-			if(pos.x-prev.x==1)
-			{
-				 seq2Align.insert(0, B.charAt(prev.x-1));
-
-			}
-			else
-			{
-				seq2Align.insert(0, '_');
-			}
-			if(pos.y-prev.y==1)
-			{			
-				seq1Align.insert(0, A.charAt(prev.y-1));
-
-			}
-			else
-			{
-				seq1Align.insert(0, '_');
-			}
-			i++;
-		//	cell=myMatrix.new Cell(pos,max);
-		//	myCells.push(cell);
-			//System.out.println("cell : "+cell);
-			myPositions.push(prev);
-			current=next;
-			System.out.println(i);
-		    System.out.println("current position : "+myPositions.peek());
-		    System.out.println(seq1Align);
-		    System.out.println(seq2Align);
-
-
-
-
-		}*/
+	    
 		
 	   
 		System.out.println("A : "+A);
@@ -618,41 +408,7 @@ public class Smith_waterman
 
 	
 	}
-/*	public class Cell
-	{
-		Coord pos= new Coord();
-		int value;
-		public Cell()
-		{
-			value=-1;
-			pos=new Coord();
-		}
-		
-		public Cell(Coord a, int b)
-		{
-			pos=a;
-			value=b;
-		}
-		public String toString()
-		{
-			return String.valueOf(value) +", "+ pos.toString();
-		}
-		
-		public Coord getPos() {
-			return pos;
-		}
-		public void setPos(Coord pos) {
-			this.pos = pos;
-		}
-		public int getValue() {
-			return value;
-		}
-		public void setValue(int value) {
-			this.value = value;
-		}
-		
-	}
-	*/
+
 	public class Coord
 	{
 		int x;
@@ -698,93 +454,5 @@ public class Smith_waterman
 			return a;
 		}
 	}
-}/*
-*//**
- * Author: Paul Reiners
- *//*
-package com.ibm.compbio.seqalign;
-
-import com.ibm.compbio.Cell;
-import com.ibm.compbio.DynamicProgramming;
-
-*//**
- * @author Paul Reiners
- * 
- *//*
-public abstract class SequenceAlignment extends DynamicProgramming {
-
-   protected int match;
-   protected int mismatch;
-   protected int space;
-   protected String[] alignments;
-
-   public SequenceAlignment(String sequence1, String sequence2) {
-      this(sequence1, sequence2, 1, -1, -1);
-   }
-
-   public SequenceAlignment(String sequence1, String sequence2, int match,
-         int mismatch, int gap) {
-      super(sequence1, sequence2);
-
-      this.match = match;
-      this.mismatch = mismatch;
-      this.space = gap;
-   }
-
-   protected Object getTraceback() {
-      StringBuffer align1Buf = new StringBuffer();
-      StringBuffer align2Buf = new StringBuffer();
-      Cell currentCell = getTracebackStartingCell();
-      while (traceBackIsNotDone(currentCell)) {
-         if (currentCell.getRow() - currentCell.getPrevCell().getRow() == 1) {
-            align2Buf.insert(0, sequence2.charAt(currentCell.getRow() - 1));
-         } else {
-            align2Buf.insert(0, '-');
-         }
-         if (currentCell.getCol() - currentCell.getPrevCell().getCol() == 1) {
-            align1Buf.insert(0, sequence1.charAt(currentCell.getCol() - 1));
-         } else {
-            align1Buf.insert(0, '-');
-         }
-         currentCell = currentCell.getPrevCell();
-      }
-
-      String[] alignments = new String[] { align1Buf.toString(),
-            align2Buf.toString() };
-
-      return alignments;
-   }
-
-   protected abstract boolean traceBackIsNotDone(Cell currentCell);
-
-   public int getAlignmentScore() {
-      if (alignments == null) {
-         getAlignment();
-      }
-
-      int score = 0;
-      for (int i = 0; i < alignments[0].length(); i++) {
-         char c1 = alignments[0].charAt(i);
-         char c2 = alignments[1].charAt(i);
-         if (c1 == '-' || c2 == '-') {
-            score += space;
-         } else if (c1 == c2) {
-            score += match;
-         } else {
-            score += mismatch;
-         }
-      }
-
-      return score;
-   }
-
-   public String[] getAlignment() {
-      ensureTableIsFilledIn();
-      alignments = (String[]) getTraceback();
-      return alignments;
-   }
-
-   protected abstract Cell getTracebackStartingCell();
 }
-*/
 
