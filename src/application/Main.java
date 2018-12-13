@@ -64,6 +64,7 @@ public class Main extends Application {
 	Grid mainGrid = new Grid(grid);
 	
 	ArrayList<Cell> tracebackCellList;
+	int k=0;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -316,17 +317,16 @@ public class Main extends Application {
 					alignmentLabel = new Label("Aligned Sequences:");
 					Label alignment2 = new Label(smith.getAlignment()+ "\n" +smith.getAlignment2());
 					
-					//Stack<Smith_waterman.> myStack = smith.getTraceback();
-				//	Stack<Smith_waterman.Coord> myStack = smith.getTraceback();
+					ArrayList<Smith_waterman.Coord> myTrace = smith.getTraceback();
 					
-					//mainGrid.addItem(2, 2, 2, true);
-					
-				/*	for(Smith_waterman.Coord item: myStack)
+					//Smith_waterman.Coord item = myTrace.get(0);
+					for(Smith_waterman.Coord item: myTrace)
 					{
 						System.out.println(item.getX());
 						System.out.println(item.getY());
-						//mainGrid.addItem(matrix[item.getY()][item.getX()], item.getX(), item.getY(), true);
-					}*/
+						mainGrid.addItem(matrix[item.getX()][item.getY()], item.getY()+1, item.getX()+1, true);
+					
+					}
 					
 					StackPane.setAlignment(alignmentLabel, Pos.TOP_CENTER);
 					StackPane.setAlignment(alignment2, Pos.CENTER);
@@ -346,7 +346,9 @@ public class Main extends Application {
 				// If the create button hasn't been pressed, don't run the algorithm
 				if (!grid.isVisible())
 					return;
-				
+				k++;
+				if(selectedAlgorithm==Main.algorithmType.LCS || selectedAlgorithm==Main.algorithmType.NMW)
+				{
 				//Reset the initially highlighted cells if they are all highlighted.
 				Cell lastCell = tracebackCellList.get(tracebackCellList.size() - 1);
 				if (mainGrid.isHighlighted(lastCell.getCol(), lastCell.getRow()))
@@ -359,37 +361,70 @@ public class Main extends Application {
 					return;
 				}
 				
-				//Highlight the next cell in the list
-				for (int i = 1; i < tracebackCellList.size(); i++)
-				{
-					if (mainGrid.isHighlighted(tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow()))
-						continue;
-					else
+					//Highlight the next cell in the list
+					for (int i = 1; i < tracebackCellList.size(); i++)
 					{
-						//Highlight the next item
-						mainGrid.setHighlight(true, tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow());
-						
-						//Get the aligned sequence up to the current cell.
-						switch (selectedAlgorithm) {
+						if (mainGrid.isHighlighted(tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow()))
+							continue;
+						else
+						{
+							//Highlight the next item
+							mainGrid.setHighlight(true, tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow());
 
-						case LCS:
-							LCS lcs = new LCS(txtInput.getText(), txtInput2.getText());
-							bottomSequenceLabel1.setText("Sequence 1: " + lcs.getLCSTraceback(tracebackCellList.get(i)));
-							bottomSequenceLabel2.setText("Sequence 2:");
-							break;
-						case NMW:
-							SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText());				
-							bottomSequenceLabel1.setText("Sequence 1: " + NMW.getAlignment(tracebackCellList.get(i))[0]);
-							bottomSequenceLabel2.setText("Sequence 2: " +  NMW.getAlignment(tracebackCellList.get(i))[1]);
-							break;
-						case SWM:
-							break;
-							
-						default: break;
+							//Get the aligned sequence up to the current cell.
+							switch (selectedAlgorithm) {
+
+							case LCS:
+								LCS lcs = new LCS(txtInput.getText(), txtInput2.getText());
+								bottomSequenceLabel1.setText("Sequence 1: " + lcs.getLCSTraceback(tracebackCellList.get(i)));
+								bottomSequenceLabel2.setText("Sequence 2:");
+								break;
+							case NMW:
+								SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText());				
+								bottomSequenceLabel1.setText("Sequence 1: " + NMW.getAlignment(tracebackCellList.get(i))[0]);
+								bottomSequenceLabel2.setText("Sequence 2: " +  NMW.getAlignment(tracebackCellList.get(i))[1]);
+								break;
+							case SWM:
+								
+
+								break;
+
+							default: break;
+							}
+							//Break out of loop since we highlighted a cell.
+							return;
 						}
-						//Break out of loop since we highlighted a cell.
-						return;
+
 					}
+
+				}
+				else
+				{
+					
+					
+					System.out.println("WE MADE IT HERE");
+					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText());
+					ArrayList<String> partialAligns= smith.getPartialAligns();
+					ArrayList<String> partialAligns2= smith.getPartialAligns2();
+					ArrayList<Smith_waterman.Coord> myTrace = smith.getTraceback();
+					Integer[][] matrix = smith.getMatrix();
+					
+					//trying to reset the highlights, doesnt work
+					for (int i = 1; i < matrix.length+1; i++)
+						for (int j = 1; j < matrix[i-1].length+1; j++)
+							mainGrid.addItem(matrix[i-1][j-1], j, i,false);
+					
+					if(k>partialAligns.size()-1)
+						k=0;
+					
+						Smith_waterman.Coord item = myTrace.get(k);				
+						//matrix[item.getX()][item.getY()],
+						//-100
+						mainGrid.addItem(matrix[item.getX()][item.getY()], item.getY()+1, item.getX()+1, true);
+						bottomSequenceLabel1.setText("Sequence 1: " + partialAligns.get(k));
+						bottomSequenceLabel2.setText("Sequence 2: " + partialAligns2.get(k));
+					
+					
 				}
 
 			});

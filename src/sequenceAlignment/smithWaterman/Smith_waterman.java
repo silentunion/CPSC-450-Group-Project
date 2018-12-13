@@ -1,6 +1,5 @@
 package sequenceAlignment.smithWaterman;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Stack;
 
 
@@ -28,11 +27,29 @@ public class Smith_waterman
 	private static StringBuffer seq2Align;
 	
 	private static Stack<Coord> myPositions;
+	private static ArrayList<String> partialAligns;
+	private static ArrayList<String> partialAligns2;
+
 	
-	public Stack<Coord> getTraceback()
-	{
-		return myPositions;
+	public static ArrayList<String> getPartialAligns() {
+		return partialAligns;
 	}
+
+
+
+	public static ArrayList<String> getPartialAligns2() {
+		return partialAligns2;
+	}
+
+
+
+
+	public ArrayList<Coord> getTraceback()
+	{
+		ArrayList<Coord> list = new ArrayList<Coord>(myPositions);
+		return list;
+	}
+	
 	
 	public Integer[][] getMatrix()
 	{
@@ -57,7 +74,7 @@ public class Smith_waterman
 	}
 	public Smith_waterman(String a, String b)
 	{
-		this(a,b,1,-1,-2);
+		this(a,b,1,-2,-1);
 	}
 	
 	public Smith_waterman(String A, String B, int match, int miss, int gap)
@@ -75,6 +92,9 @@ public class Smith_waterman
 	    seq2Align = new StringBuffer();
 	    
 	    myPositions = new Stack<Coord>();
+	    partialAligns= new ArrayList<String>();
+	    partialAligns2= new ArrayList<String>();
+
 
 		scoringMatrix= new Integer[B.length()+1][A.length()+1];
 		//fill it with 0s in 1st row and column and -1s everywhere else
@@ -156,38 +176,7 @@ public class Smith_waterman
 			//System.out.println();
 		}
 	}
-	/*public String[] getAlignment() {
-		  
-		  //loadScoreTable();
-		   
-		  StringBuffer seq1Align = new StringBuffer();
-	      StringBuffer seq2Align = new StringBuffer();
-	      Cell currentCell = scoringMatrix[scoringMatrix.length - 1][scoringMatrix[0].length - 1];
-	      //Start from the bottom right of the score table.
-	      
-	      while (!isTraceBackFinished(currentCell)) {
-	         //If cell points left than grab the next character otherwise add a gap
-	         if (currentCell.getCol() - currentCell.getPrevCell().getCol() == 1) {
-	            seq1Align.insert(0, sequence1.charAt(currentCell.getCol() - 1));
-	         } else {
-	            seq1Align.insert(0, '-');
-	         }
-	       
-	   	  //If cell points up then grab the next character otherwise add a gap
-	         if (currentCell.getRow() - currentCell.getPrevCell().getRow() == 1) {
-	            seq2Align.insert(0, sequence2.charAt(currentCell.getRow() - 1));
-	         } else {
-	            seq2Align.insert(0, '-');
-	         }
-	 
-	         currentCell = currentCell.getPrevCell();
-	      }
-
-	      String[] alignments = new String[] { seq1Align.toString(),
-	            seq2Align.toString() };
-
-	      return alignments;
-	   }*/
+	
 	public static void main(String[] args)
 	{
 		Smith_waterman test = new Smith_waterman("TGTTACGG","GGTTGACTA ",3,-3,-2);
@@ -220,7 +209,7 @@ public class Smith_waterman
 		//Stack<Cell> myCells = new Stack<Cell>();
 		//Cell cell= myMatrix.new Cell();
 		Coord prev= myMatrix.new Coord();
-		Coord prev2= myMatrix.new Coord();
+		//Coord prev2= myMatrix.new Coord();
 		
 		
 
@@ -257,7 +246,7 @@ public class Smith_waterman
 	    System.out.println(seq2Align);		
 	    Coord pos;
 	    Coord myStringpos;
-	    Stack<Coord> mysPos=new Stack<Coord>();
+	   // Stack<Coord> mysPos=new Stack<Coord>();
 	    int next=-1;
 	    int current=max;
 	    Direction going=Direction.blank;
@@ -294,7 +283,7 @@ public class Smith_waterman
 	    	System.out.println("chars at "+myStringpos.x+" and "+myStringpos.y);
 	    	System.out.println(A.charAt(myStringpos.y)+" "+B.charAt(myStringpos.x));
 	    	myPositions.push(pos);
-	    	mysPos.push(myStringpos);
+	    	//mysPos.push(myStringpos);
 	    	//System.out.println(myDirections.peek());
 	    	//System.out.println(prev+" "+pos);
 	    	//System.out.println(skip);
@@ -450,6 +439,9 @@ public class Smith_waterman
 	    			seq1Align.insert(0, B.charAt(myStringpos.x));
 	    			//System.out.println(B.charAt(myCol));
 	  			    seq2Align.insert(0, A.charAt(myStringpos.y));
+
+	  		    	partialAligns.add(seq1Align.toString());
+	  		    	partialAligns2.add(seq2Align.toString());
 	    		}
 	    		break;
 	    	}
@@ -481,6 +473,10 @@ public class Smith_waterman
     		
 	    	System.out.println(seq1Align);
 	    	System.out.println(seq2Align);
+	    	partialAligns.add(seq1Align.toString());
+	    	partialAligns2.add(seq2Align.toString());
+	    	
+	    	
 	    	//dir=nextDir;
 	    	coming=going;
 	    	current=next;
@@ -606,7 +602,18 @@ public class Smith_waterman
 		
 	    System.out.println(seq1Align);
 	    System.out.println(seq2Align);
+	    
+	    System.out.println(partialAligns);
+	    System.out.println(partialAligns2);
 
+	    
+	    
+	    for(int i=0;i<partialAligns.size();i++)
+	    {
+	    	System.out.print(partialAligns.get(i)+" ");
+	    	System.out.println(partialAligns2.get(i));
+
+	    }
 		
 
 	
