@@ -20,8 +20,8 @@ public class Grid
 	String input;
 	String input2;
 	
-	ColumnConstraints cols = new ColumnConstraints(30);
-	RowConstraints rows = new RowConstraints(30);
+	ColumnConstraints cols = new ColumnConstraints(40);
+	RowConstraints rows = new RowConstraints(40);
 	
 	Grid(GridPane grid)
 	{
@@ -34,8 +34,8 @@ public class Grid
 	 */
 	public void createGrid(TextField txtInput, TextField txtInput2)
 	{		
-		input = " "+txtInput.getText();
-		input2 = " "+txtInput2.getText();
+		input = " "+txtInput.getText().toUpperCase();
+		input2 = " "+txtInput2.getText().toUpperCase();
 						
 		for(int i = 0; i < input.length(); i++)
 		{

@@ -23,6 +23,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.layout.StackPane;
 
 public class Main extends Application {
@@ -108,6 +109,9 @@ public class Main extends Application {
 			hbox.setPadding(new Insets(5, 5, 5, 5));
 			hbox.setSpacing(10);
 
+			bottomSequenceLabel1.setFont(new Font(20));
+			bottomSequenceLabel2.setFont(new Font(20));
+			
 			//This HBox is for the bottom box
 			hboxBottomBox.setAlignment(Pos.CENTER_LEFT);
 			hboxBottomBox.setSpacing(30);
@@ -128,7 +132,8 @@ public class Main extends Application {
 			    else
 			    	return change;
 			    //If it is the correct letter, allow the change. Otherwise throw it away.
-			    if (text.equals('a') || text.equals('c') || text.equals('g') || text.equals('t') ||  text.equals('u')) {
+			    if (text.equals('a') || text.equals('c') || text.equals('g') || text.equals('t') ||  text.equals('u')
+			    		|| text.equals('A') || text.equals('C') || text.equals('G') || text.equals('T') ||  text.equals('U')) {
 			        return change;
 			    }
 			    return null;
@@ -146,7 +151,8 @@ public class Main extends Application {
 			    else
 			    	return change;
 			    //If it is the correct letter, allow the change. Otherwise throw it away.
-			    if (text.equals('a') || text.equals('c') || text.equals('g') || text.equals('t') ||  text.equals('u')) {
+			    if (text.equals('a') || text.equals('c') || text.equals('g') || text.equals('t') ||  text.equals('u')
+			    		|| text.equals('A') || text.equals('C') || text.equals('G') || text.equals('T') ||  text.equals('U')) {
 			        return change;
 			    }
 			    return null;
@@ -249,6 +255,7 @@ public class Main extends Application {
 				mainGrid.createGrid(txtInput, txtInput2);
 
 				Label alignmentLabel;
+
 				// Run the selected algorithm
 				switch (selectedAlgorithm) {
 
@@ -266,7 +273,9 @@ public class Main extends Application {
 
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Longest common subsequence:");
+					alignmentLabel.setFont(new Font(24));
 					Label commonSubsequence = new Label(lcs.getLCSTraceback());
+					commonSubsequence.setFont(new Font(24));
 					//Bottom box info
 					bottomSequenceLabel1.setText("Sequence 1: " + lcs.getLCSTraceback());
 					bottomSequenceLabel2.setText("Sequence 2:");
@@ -293,7 +302,10 @@ public class Main extends Application {
 						
 					// Create the info for the information tab:
 					alignmentLabel = new Label("Aligned Sequences:");
+					alignmentLabel.setFont(new Font(24));
 					Label alignment1 = new Label(NMW.getAlignment()[0] + "\n" + NMW.getAlignment()[1]);
+					alignment1.setFont(new Font(24));
+					
 					//Bottom box info
 					bottomSequenceLabel1.setText("Sequence 1: " + NMW.getAlignment()[0]);
 					bottomSequenceLabel2.setText("Sequence 2: " + NMW.getAlignment()[1]);
@@ -315,7 +327,9 @@ public class Main extends Application {
 							mainGrid.addItem(matrix[i-1][j-1], j, i,false);
 					
 					alignmentLabel = new Label("Aligned Sequences:");
+					alignmentLabel.setFont(new Font(24));
 					Label alignment2 = new Label(smith.getAlignment()+ "\n" +smith.getAlignment2());
+					alignment2.setFont(new Font(24));
 					
 					ArrayList<Smith_waterman.Coord> myTrace = smith.getTraceback();
 					
