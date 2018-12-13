@@ -36,7 +36,7 @@ public class Main extends Application {
 	};
 	//The currently selected algorithm
 	private algorithmType selectedAlgorithm = algorithmType.LCS;
-	
+	private algorithmType chosenAlgorithm = algorithmType.LCS;
 	Stage window;
 	Scene mainScene, secondScene;
 
@@ -47,12 +47,18 @@ public class Main extends Application {
 	HBox hboxSequence2 = new HBox();
 	VBox vboxSequences = new VBox();
 	HBox hboxBottomBox = new HBox();
+	HBox hboxValues = new HBox();
 	GridPane grid = new GridPane();
 	StackPane stack = new StackPane();
 
 	//These are our interactable GUI objects
 	TextField txtInput = new TextField();
 	TextField txtInput2 = new TextField();
+	
+	TextField txtGap = new TextField();
+	TextField txtMatch = new TextField();
+	TextField txtMismatch = new TextField();
+	
 	Button btnClear = new Button("Clear");
 	Button btnTest = new Button("Run Algorithm");
 	Button btnNext = new Button("Get Traceback");
@@ -95,11 +101,26 @@ public class Main extends Application {
 			hboxSequence2.setAlignment(Pos.CENTER_LEFT);
 			hboxSequence2.getChildren().addAll(sequenceLabel, txtInput2);
 			
+			sequenceLabel = new Label("Match:");
+			sequenceLabel.setMinWidth(50);
+			hboxValues.setSpacing(10);
+			hboxValues.setAlignment(Pos.CENTER_LEFT);
+			hboxValues.getChildren().addAll(sequenceLabel, txtMatch);
+			sequenceLabel = new Label("Mismatch:");
+			sequenceLabel.setMinWidth(60);
+			hboxValues.getChildren().addAll(sequenceLabel, txtMismatch);
+			sequenceLabel = new Label("Gap:");
+			sequenceLabel.setMinWidth(30);
+			hboxValues.getChildren().addAll(sequenceLabel, txtGap);
+			//This hbox starts invisible since because we start with the LCS
+			hboxValues.setVisible(false);
+			
+			
 			//This VBox contains positions the text inputs on top of one another.
 			vboxSequences.setSpacing(10);
 			vboxSequences.setMaxSize(300, 300);
 			vboxSequences.setPadding(new Insets(15, 10, 10, 15));
-			vboxSequences.getChildren().addAll(hboxSequence1, hboxSequence2);
+			vboxSequences.getChildren().addAll(hboxSequence1, hboxSequence2, hboxValues);
 			
 			//Finally this last HBox organized the text inputs with the buttons and check boxes.
 			hbox.getChildren().add(vboxSequences);
@@ -188,6 +209,11 @@ public class Main extends Application {
 				checkNMW.setSelected(false);
 				checkSWM.setSelected(false);
 
+				hboxValues.setVisible(false);
+				txtMatch.setText("0");
+				txtMismatch.setText("0");
+				txtGap.setText("0");
+
 				selectedAlgorithm = algorithmType.LCS;
 			});
 
@@ -197,6 +223,11 @@ public class Main extends Application {
 				checkNMW.setSelected(true);
 				checkSWM.setSelected(false);
 
+				txtMatch.setText("1");
+				txtMismatch.setText("-1");
+				txtGap.setText("-2");
+				hboxValues.setVisible(true);
+			
 				selectedAlgorithm = algorithmType.NMW;
 			});
 
@@ -206,6 +237,11 @@ public class Main extends Application {
 				checkNMW.setSelected(false);
 				checkSWM.setSelected(true);
 
+				txtMatch.setText("1");
+				txtMismatch.setText("-1");
+				txtGap.setText("-2");
+				hboxValues.setVisible(true);
+				
 				selectedAlgorithm = algorithmType.SWM;
 			});
 			
@@ -254,6 +290,7 @@ public class Main extends Application {
 				mainGrid.createGrid(txtInput, txtInput2);
 
 				Label alignmentLabel;
+				chosenAlgorithm = selectedAlgorithm;
 				// Run the selected algorithm
 				switch (selectedAlgorithm) {
 
@@ -287,7 +324,9 @@ public class Main extends Application {
 				// IF NEEDLEMAN WUNSCH ALGORITHM IS SELECTED:
 				case NMW:
 					// Run an instance of the algorithm
-					SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText());
+					if (txtMatch.getText().isEmpty() ||txtGap.getText().isEmpty() || txtMismatch.getText().isEmpty())
+						return;
+					SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
 					Cell[][] cellTable = NMW.getScoreTable();
 					tracebackCellList = NMW.getTracebackPath();
 					// For the needleman wunsch algorithm we skip row & column zero because its
@@ -317,7 +356,9 @@ public class Main extends Application {
 
 				// IF SMITH WATERMAN ALGORITHM IS SELECTED:
 				case SWM:
-					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText());
+					if (txtMatch.getText().isEmpty() ||txtGap.getText().isEmpty() || txtMismatch.getText().isEmpty())
+						return;
+					Smith_waterman smith = new Smith_waterman(txtInput.getText(),  txtInput2.getText(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
 					Integer[][] matrix = smith.getMatrix();
 					
 					for (int i = 1; i < matrix.length+1; i++)
@@ -329,6 +370,9 @@ public class Main extends Application {
 					Label alignment2 = new Label(smith.getAlignment().toString().toUpperCase() 
 							+ "\n" +smith.getAlignment2().toString().toUpperCase());
 					alignment2.setFont(new Font(24));
+					
+					bottomSequenceLabel1.setText("Sequence 1: " + smith.getAlignment().toString().toUpperCase() );
+					bottomSequenceLabel2.setText("Sequence 2: " + smith.getAlignment2().toString().toUpperCase());
 					
 					ArrayList<Smith_waterman.Coord> myTrace = smith.getTraceback();
 					
@@ -359,8 +403,7 @@ public class Main extends Application {
 				// If the create button hasn't been pressed, don't run the algorithm
 				if (!grid.isVisible())
 					return;
-				
-				if(selectedAlgorithm==Main.algorithmType.LCS || selectedAlgorithm==Main.algorithmType.NMW)
+				if(chosenAlgorithm==Main.algorithmType.LCS || chosenAlgorithm==Main.algorithmType.NMW)
 				{
 				//Reset the initially highlighted cells if they are all highlighted.
 				Cell lastCell = tracebackCellList.get(tracebackCellList.size() - 1);
@@ -385,7 +428,7 @@ public class Main extends Application {
 							mainGrid.setHighlight(true, tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow());
 
 							//Get the aligned sequence up to the current cell.
-							switch (selectedAlgorithm) {
+							switch (chosenAlgorithm) {
 
 							case LCS:
 								LCS lcs = new LCS(txtInput.getText(), txtInput2.getText());
@@ -393,7 +436,7 @@ public class Main extends Application {
 								bottomSequenceLabel2.setText("Sequence 2:");
 								break;
 							case NMW:
-								SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText());				
+								SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));				
 								bottomSequenceLabel1.setText("Sequence 1: " + NMW.getAlignment(tracebackCellList.get(i))[0]);
 								bottomSequenceLabel2.setText("Sequence 2: " +  NMW.getAlignment(tracebackCellList.get(i))[1]);
 								break;
@@ -416,7 +459,7 @@ public class Main extends Application {
 					
 					
 					//System.out.println("WE MADE IT HERE");
-					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText());
+					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
 					ArrayList<String> partialAligns= smith.getPartialAligns();
 					ArrayList<String> partialAligns2= smith.getPartialAligns2();
 					ArrayList<Smith_waterman.Coord> myTrace = smith.getTraceback();
