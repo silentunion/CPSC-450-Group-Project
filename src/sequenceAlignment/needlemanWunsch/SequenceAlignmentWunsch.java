@@ -46,14 +46,14 @@ public class SequenceAlignmentWunsch extends DynamicProgramming {
          if (currentCell.getCol() - currentCell.getPrevCell().getCol() == 1) {
             seq1Align.insert(0, sequence1.charAt(currentCell.getCol() - 1));
          } else {
-            seq1Align.insert(0, '-');
+            seq1Align.insert(0, '_');
          }
        
    	  //If cell points up then grab the next character otherwise add a gap
          if (currentCell.getRow() - currentCell.getPrevCell().getRow() == 1) {
             seq2Align.insert(0, sequence2.charAt(currentCell.getRow() - 1));
          } else {
-            seq2Align.insert(0, '-');
+            seq2Align.insert(0, '_');
          }
  
          currentCell = currentCell.getPrevCell();
@@ -80,14 +80,14 @@ public class SequenceAlignmentWunsch extends DynamicProgramming {
 	         if (currentCell.getCol() - currentCell.getPrevCell().getCol() == 1) {
 	            seq1Align.insert(0, sequence1.charAt(currentCell.getCol() - 1));
 	         } else {
-	            seq1Align.insert(0, '-');
+	            seq1Align.insert(0, '_');
 	         }
 	       
 	   	  //If cell points up then grab the next character otherwise add a gap
 	         if (currentCell.getRow() - currentCell.getPrevCell().getRow() == 1) {
 	            seq2Align.insert(0, sequence2.charAt(currentCell.getRow() - 1));
 	         } else {
-	            seq2Align.insert(0, '-');
+	            seq2Align.insert(0, '_');
 	         }
 	 
 	         currentCell = currentCell.getPrevCell();

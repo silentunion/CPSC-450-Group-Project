@@ -40,6 +40,7 @@ public class Main extends Application {
 	Stage window;
 	Scene mainScene, secondScene;
 
+	//Below are our GUI components
 	BorderPane mainLayout = new BorderPane();
 	ScrollPane scroll = new ScrollPane();
 	HBox hbox = new HBox();
@@ -51,24 +52,26 @@ public class Main extends Application {
 	GridPane grid = new GridPane();
 	StackPane stack = new StackPane();
 
-	//These are our interactable GUI objects
+	//These are our interactable GUI text inputs
 	TextField txtInput = new TextField();
-	TextField txtInput2 = new TextField();
-	
+	TextField txtInput2 = new TextField();	
 	TextField txtGap = new TextField();
 	TextField txtMatch = new TextField();
 	TextField txtMismatch = new TextField();
 	
+	//Buttons and checkboxes
 	Button btnClear = new Button("Clear");
 	Button btnTest = new Button("Run Algorithm");
-	Button btnNext = new Button("Get Traceback");
+	Button btnNext = new Button("Get Next Traceback");
 	CheckBox checkLCS = new CheckBox(" Longest \n Common \n Subsequence");
 	CheckBox checkNMW = new CheckBox(" Needleman Wunsch \n (Global)");
 	CheckBox checkSWM = new CheckBox(" Smith Waterman \n (Local)");
+	//Labels for the traceback sequences at the bottom of the GUI
 	Label bottomSequenceLabel1 = new Label("");
 	Label bottomSequenceLabel2 = new Label("");
 	// create the Grid class, this is to get it out of main
 	Grid mainGrid = new Grid(grid);
+	
 	
 	ArrayList<Cell> tracebackCellList;
 	int k=0;
@@ -87,7 +90,9 @@ public class Main extends Application {
 			checkNMW.setSelected(false);
 			checkSWM.setSelected(false);
 
-			// First we set up the vbox & hbox's which contain the top layout with the text fields and buttons
+			// We need to set up the GUI layout. To do this we use a collection of HBox and VBox.
+			// These boxes contain the GUI components. We will add them to our stage and position them on the screen.
+			
 			
 			//This first HBox contains the first sequence text input box
 			Label sequenceLabel = new Label("Sequence 1:");
@@ -101,6 +106,7 @@ public class Main extends Application {
 			hboxSequence2.setAlignment(Pos.CENTER_LEFT);
 			hboxSequence2.getChildren().addAll(sequenceLabel, txtInput2);
 			
+			//Now we create the HBox for the Match, mismatch and gap value boxes
 			sequenceLabel = new Label("Match:");
 			sequenceLabel.setMinWidth(50);
 			hboxValues.setSpacing(10);
@@ -112,11 +118,11 @@ public class Main extends Application {
 			sequenceLabel = new Label("Gap:");
 			sequenceLabel.setMinWidth(30);
 			hboxValues.getChildren().addAll(sequenceLabel, txtGap);
-			//This hbox starts invisible since because we start with the LCS
+			//This hbox starts invisible since because we start with the LCS which doesn't use the values.
 			hboxValues.setVisible(false);
 			
 			
-			//This VBox contains positions the text inputs on top of one another.
+			//This VBox contains positions the text inputs on top of one another on top of the value boxes.
 			vboxSequences.setSpacing(10);
 			vboxSequences.setMaxSize(300, 300);
 			vboxSequences.setPadding(new Insets(15, 10, 10, 15));
@@ -135,6 +141,18 @@ public class Main extends Application {
 			hboxBottomBox.setSpacing(30);
 			hboxBottomBox.setPadding(new Insets(15, 10, 10, 15));
 			hboxBottomBox.getChildren().addAll(btnNext, bottomSequenceLabel1, bottomSequenceLabel2);
+			
+			
+			
+			// Here we set up the side panel for information, to be expanded on later, uses a stackpane
+			
+			stack.setPadding(new Insets(15, 12, 10, 15));
+			stack.setBorder(Border.EMPTY);
+			stack.setMinWidth(300);
+			stack.setStyle("-fx-border-style:solid; -fx-border-color: black;");
+
+						
+			//That does it for the GUI components. Now we will add our text correction for the sequence input boxes
 			
 			//TEXT INPUT TEXT FORMATTER ALLOWS ONLY A C G T and U to be entered
 			//Text inputs cannot share the same formatter so we need two.
@@ -178,16 +196,6 @@ public class Main extends Application {
 			txtInput.setTextFormatter(textFormatterSeq1);
 			txtInput2.setTextFormatter(textFormatterSeq2);
 			
-			
-			// Here we set up of side panel for information, to be expanded on later, uses a stackpane
-			// Label info = new Label("Info goes Here");
-			// StackPane.setAlignment(info, Pos.CENTER);
-			// stack.getChildren().add(info);
-			stack.setPadding(new Insets(15, 12, 10, 15));
-			stack.setBorder(Border.EMPTY);
-			stack.setMinWidth(300);
-			stack.setStyle("-fx-border-style:solid; -fx-border-color: black;");
-
 			// add the layouts to the main layout
 			mainLayout.setTop(hbox);
 			mainLayout.setRight(stack);
@@ -297,7 +305,7 @@ public class Main extends Application {
 				// IF LONGEST COMMON SUBSEQUENCE IS SELECTED:
 				case LCS:
 					// Run an instance of the algorithm
-					LCS lcs = new LCS(txtInput.getText(), txtInput2.getText());
+					LCS lcs = new LCS(txtInput.getText().toUpperCase(), txtInput2.getText().toUpperCase());
 					Cell[][] lcsTable = lcs.getScoreTable();
 					tracebackCellList = lcs.getTracebackPath();
 					
@@ -323,14 +331,18 @@ public class Main extends Application {
 
 				// IF NEEDLEMAN WUNSCH ALGORITHM IS SELECTED:
 				case NMW:
-					// Run an instance of the algorithm
+	
+					//If the gap values are empty quit the algorithm.
 					if (txtMatch.getText().isEmpty() ||txtGap.getText().isEmpty() || txtMismatch.getText().isEmpty())
 						return;
-					SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
+					
+					// Run an instance of the algorithm
+					
+					SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText().toUpperCase(), txtInput2.getText().toUpperCase(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
 					Cell[][] cellTable = NMW.getScoreTable();
 					tracebackCellList = NMW.getTracebackPath();
-					// For the needleman wunsch algorithm we skip row & column zero because its
-					// always the same
+					
+					// For the needleman wunsch algorithm we skip row & column zero because its always the same
 					for (int i = 0; i < cellTable.length; i++)
 						for (int j = 0; j < cellTable[i].length; j++)
 						{
@@ -356,9 +368,12 @@ public class Main extends Application {
 
 				// IF SMITH WATERMAN ALGORITHM IS SELECTED:
 				case SWM:
+					
+					//If the gap values are empty quit the algorithm.
 					if (txtMatch.getText().isEmpty() ||txtGap.getText().isEmpty() || txtMismatch.getText().isEmpty())
 						return;
-					Smith_waterman smith = new Smith_waterman(txtInput.getText(),  txtInput2.getText(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
+					
+					Smith_waterman smith = new Smith_waterman(txtInput.getText().toUpperCase(),  txtInput2.getText().toUpperCase(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
 					Integer[][] matrix = smith.getMatrix();
 					
 					for (int i = 1; i < matrix.length+1; i++)
@@ -405,14 +420,22 @@ public class Main extends Application {
 					return;
 				if(chosenAlgorithm==Main.algorithmType.LCS || chosenAlgorithm==Main.algorithmType.NMW)
 				{
+				
+					
 				//Reset the initially highlighted cells if they are all highlighted.
 				Cell lastCell = tracebackCellList.get(tracebackCellList.size() - 1);
 				if (mainGrid.isHighlighted(lastCell.getCol(), lastCell.getRow()))
 				{
 					for (int i = 1; i < tracebackCellList.size(); i++)
 						mainGrid.setHighlight(false, tracebackCellList.get(i).getCol(), tracebackCellList.get(i).getRow());
-					bottomSequenceLabel1.setText("Sequence 1: ");
-					bottomSequenceLabel2.setText("Sequence 2: ");
+					
+					if (chosenAlgorithm != algorithmType.LCS)
+					{
+						bottomSequenceLabel1.setText("Sequence 1: ");
+						bottomSequenceLabel2.setText("Sequence 2: ");
+					}
+					else
+						bottomSequenceLabel1.setText("Sequence: ");
 					//Reseting counts as a click so we dont perform the rest of the code.
 					return;
 				}
@@ -431,14 +454,14 @@ public class Main extends Application {
 							switch (chosenAlgorithm) {
 
 							case LCS:
-								LCS lcs = new LCS(txtInput.getText(), txtInput2.getText());
-								bottomSequenceLabel1.setText("Sequence 1: " + lcs.getLCSTraceback(tracebackCellList.get(i)));
-								bottomSequenceLabel2.setText("Sequence 2:");
+								LCS lcs = new LCS(txtInput.getText().toUpperCase(), txtInput2.getText().toUpperCase());
+								bottomSequenceLabel1.setText("Sequence: " + lcs.getLCSTraceback(tracebackCellList.get(i)).toUpperCase());
+								//bottomSequenceLabel2.setText("Sequence 2:");
 								break;
 							case NMW:
-								SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText(), txtInput2.getText(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));				
-								bottomSequenceLabel1.setText("Sequence 1: " + NMW.getAlignment(tracebackCellList.get(i))[0]);
-								bottomSequenceLabel2.setText("Sequence 2: " +  NMW.getAlignment(tracebackCellList.get(i))[1]);
+								SequenceAlignmentWunsch NMW = new SequenceAlignmentWunsch(txtInput.getText().toUpperCase(), txtInput2.getText().toUpperCase(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));				
+								bottomSequenceLabel1.setText("Sequence 1: " + NMW.getAlignment(tracebackCellList.get(i))[0].toUpperCase());
+								bottomSequenceLabel2.setText("Sequence 2: " +  NMW.getAlignment(tracebackCellList.get(i))[1].toUpperCase());
 								break;
 							case SWM:
 								
@@ -459,7 +482,7 @@ public class Main extends Application {
 					
 					
 					//System.out.println("WE MADE IT HERE");
-					Smith_waterman smith = new Smith_waterman(txtInput.getText(), txtInput2.getText(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
+					Smith_waterman smith = new Smith_waterman(txtInput.getText().toUpperCase(), txtInput2.getText().toUpperCase(), Integer.parseInt(txtMatch.getText()), Integer.parseInt(txtMismatch.getText()), Integer.parseInt(txtGap.getText()));
 					ArrayList<String> partialAligns= smith.getPartialAligns();
 					ArrayList<String> partialAligns2= smith.getPartialAligns2();
 					ArrayList<Smith_waterman.Coord> myTrace = smith.getTraceback();
@@ -484,14 +507,13 @@ public class Main extends Application {
 					//-100
 					//mainGrid.addItem(matrix[item.getX()][item.getY()], item.getY()+1, item.getX()+1, true);
 					mainGrid.setHighlight(true, item.getY(), item.getX());
-					bottomSequenceLabel1.setText("Sequence 1: " + partialAligns.get(k));
-					bottomSequenceLabel2.setText("Sequence 2: " + partialAligns2.get(k));
+					bottomSequenceLabel1.setText("Sequence 1: " + partialAligns.get(k).toUpperCase());
+					bottomSequenceLabel2.setText("Sequence 2: " + partialAligns2.get(k).toUpperCase());
 
 					k++;
 				}
 
 			});
-
 			
 		} catch (Exception e) {
 			e.printStackTrace();
